@@ -1,0 +1,59 @@
+/* ── Admin — Premium ── */
+.admin-panels {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+}
+
+.admin-panel {
+    padding: 24px;
+    background: var(--bg-glass);
+    backdrop-filter: blur(16px);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-xl);
+    box-shadow: var(--shadow-sm);
+    transition: border-color var(--transition-base);
+}
+
+.admin-panel:hover {
+    border-color: var(--border-glow);
+}
+
+.admin-panel h3 {
+    font-size: 0.95rem;
+    font-weight: 700;
+    color: var(--text-bright);
+    margin-bottom: 16px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.admin-form {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+}
+
+.admin-result {
+    margin-top: 14px;
+    padding: 12px;
+    border-radius: var(--radius-lg);
+    font-size: 0.82rem;
+}
+
+.admin-result.success {
+    background: var(--success-bg);
+    color: var(--success);
+}
+
+.admin-result.error {
+    background: var(--danger-bg);
+    color: var(--danger);
+}
+
+@media (max-width: 900px) {
+    .admin-panels {
+        grid-template-columns: 1fr;
+    }
+}

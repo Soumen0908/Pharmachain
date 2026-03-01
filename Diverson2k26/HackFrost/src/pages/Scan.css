@@ -1,0 +1,334 @@
+/* ── Scan — Premium ── */
+.scan-layout {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+}
+
+.scan-panel {
+    padding: 24px;
+    background: var(--bg-glass);
+    backdrop-filter: blur(16px);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-xl);
+    box-shadow: var(--shadow-sm);
+    transition: border-color var(--transition-base);
+}
+
+.scan-panel:hover {
+    border-color: var(--border-glow);
+}
+
+.scan-panel h3 {
+    font-size: 0.95rem;
+    font-weight: 700;
+    color: var(--text-bright);
+    margin-bottom: 16px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.scan-camera {
+    width: 100%;
+    aspect-ratio: 4/3;
+    background: rgba(148, 163, 184, 0.04);
+    border-radius: var(--radius-lg);
+    border: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 14px;
+    overflow: hidden;
+}
+
+.scan-camera video {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.scan-placeholder {
+    text-align: center;
+    color: var(--text-muted);
+}
+
+.scan-placeholder .scan-icon {
+    font-size: 2rem;
+    margin-bottom: 8px;
+    opacity: 0.3;
+}
+
+.scan-placeholder p {
+    font-size: 0.8rem;
+}
+
+.scan-manual {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.scan-manual-form {
+    display: flex;
+    gap: 8px;
+}
+
+.scan-manual-form .input-field {
+    flex: 1;
+}
+
+.scan-result {
+    padding: 14px;
+    border-radius: var(--radius-lg);
+    margin-top: 14px;
+}
+
+.scan-result.found {
+    background: var(--success-bg);
+    border: 1px solid rgba(16, 185, 129, 0.2);
+}
+
+.scan-result.not-found {
+    background: var(--danger-bg);
+    border: 1px solid rgba(239, 68, 68, 0.2);
+}
+
+.scan-result h4 {
+    font-size: 0.88rem;
+    font-weight: 700;
+    margin-bottom: 8px;
+}
+
+.scan-result-details {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 6px;
+    font-size: 0.78rem;
+}
+
+.scan-history {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.scan-history-item {
+    padding: 10px 12px;
+    background: rgba(148, 163, 184, 0.04);
+    border-radius: var(--radius-lg);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    font-size: 0.8rem;
+    border: 1px solid var(--border-light);
+}
+
+.scan-history-id {
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+    color: var(--brand-light);
+}
+
+@media (max-width: 900px) {
+    .scan-layout {
+        grid-template-columns: 1fr;
+    }
+}
+
+/* ── Upload QR Section ── */
+.upload-section h3 {
+    font-size: 0.95rem;
+    font-weight: 700;
+    color: var(--text-bright);
+    margin-bottom: 4px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.upload-section > p {
+    font-size: 0.8rem;
+    color: var(--text-muted);
+    margin-bottom: 14px;
+}
+
+/* Dropzone */
+.upload-dropzone {
+    border: 2px dashed var(--border);
+    border-radius: var(--radius-xl);
+    padding: 32px 20px;
+    text-align: center;
+    cursor: pointer;
+    transition: all var(--transition-base);
+    background: rgba(148, 163, 184, 0.02);
+    position: relative;
+}
+
+.upload-dropzone:hover {
+    border-color: var(--brand);
+    background: rgba(99, 102, 241, 0.04);
+}
+
+.upload-dropzone.drag-over {
+    border-color: var(--brand);
+    background: rgba(99, 102, 241, 0.08);
+    box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.1);
+    transform: scale(1.01);
+}
+
+.upload-dropzone.has-file {
+    border-style: solid;
+    cursor: default;
+    padding: 12px;
+}
+
+.dropzone-placeholder {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 6px;
+    color: var(--text-muted);
+}
+
+.dropzone-placeholder svg {
+    opacity: 0.3;
+    margin-bottom: 4px;
+}
+
+.dropzone-placeholder p {
+    font-size: 0.88rem;
+    font-weight: 600;
+    color: var(--text-secondary);
+}
+
+.dropzone-placeholder span {
+    font-size: 0.76rem;
+    color: var(--text-muted);
+}
+
+.dropzone-formats {
+    font-size: 0.68rem !important;
+    opacity: 0.6;
+    margin-top: 4px;
+}
+
+/* Preview */
+.dropzone-preview {
+    position: relative;
+    display: flex;
+    justify-content: center;
+}
+
+.dropzone-preview img {
+    max-width: 240px;
+    max-height: 240px;
+    border-radius: var(--radius-lg);
+    object-fit: contain;
+    border: 1px solid var(--border);
+}
+
+.preview-clear {
+    position: absolute;
+    top: -6px;
+    right: -6px;
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    border: 1px solid var(--border);
+    background: var(--bg-elevated);
+    color: var(--text-muted);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    z-index: 2;
+    transition: all var(--transition-base);
+}
+
+.preview-clear:hover {
+    background: rgba(239, 68, 68, 0.15);
+    border-color: rgba(239, 68, 68, 0.3);
+    color: #ef4444;
+}
+
+/* Upload actions */
+.upload-actions {
+    display: flex;
+    gap: 8px;
+    margin-top: 14px;
+}
+
+.upload-actions .btn {
+    flex: 1;
+}
+
+/* Upload result */
+.upload-result {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-top: 14px;
+    padding: 14px 16px;
+    border-radius: var(--radius-lg);
+    animation: txhSlideDown 0.25s ease;
+}
+
+.upload-result.success {
+    background: rgba(16, 185, 129, 0.08);
+    border: 1px solid rgba(16, 185, 129, 0.2);
+    color: #10b981;
+}
+
+.upload-result.error {
+    background: rgba(239, 68, 68, 0.08);
+    border: 1px solid rgba(239, 68, 68, 0.2);
+    color: #ef4444;
+}
+
+.upload-result strong {
+    font-size: 0.85rem;
+    display: block;
+    margin-bottom: 2px;
+}
+
+.upload-result p {
+    font-size: 0.78rem;
+    color: var(--text-secondary);
+    margin: 0;
+}
+
+.upload-result code {
+    font-family: 'JetBrains Mono', 'Fira Code', monospace;
+    font-size: 0.78rem;
+    background: rgba(148, 163, 184, 0.1);
+    padding: 1px 6px;
+    border-radius: 4px;
+    color: var(--text-bright);
+}
+
+.upload-result .btn {
+    margin-left: auto;
+    white-space: nowrap;
+    flex-shrink: 0;
+}
+
+.btn-sm {
+    padding: 6px 14px !important;
+    font-size: 0.76rem !important;
+}
+
+/* Spin animation */
+@keyframes txhSlideDown {
+    from { opacity: 0; transform: translateY(-8px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.spin {
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+}

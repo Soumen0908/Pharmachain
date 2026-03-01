@@ -1,0 +1,28 @@
+[
+  {
+    "qrToken": "913a293f3e8d0d5c4c5938615ee7cb8ba17e4ce06b9af0a3",
+    "batchNumber": "COV-2026-004",
+    "batchIdHash": "0xc47d3cdc11ddeb05a0d9c4c62881e77f836568637aeb20232f5a5c143667e7a2",
+    "action": "transferToDistributor",
+    "location": "Mumbai Warehouse",
+    "senderRole": "manufacturer",
+    "senderEmail": "cipla@pharma.com",
+    "createdAt": "2026-02-28T13:48:19.335Z",
+    "expiresAt": 1772287399335,
+    "used": false
+  },
+  {
+    "qrToken": "5a15e419039c017907ce0447bfe6a3f1cd5707584c2b38df",
+    "batchNumber": "COV-2026-004",
+    "batchIdHash": "0xc47d3cdc11ddeb05a0d9c4c62881e77f836568637aeb20232f5a5c143667e7a2",
+    "action": "transferToDistributor",
+    "location": "Mumbai Warehouse",
+    "senderRole": "manufacturer",
+    "senderEmail": "cipla@pharma.com",
+    "createdAt": "2026-02-28T13:48:46.521Z",
+    "expiresAt": 1772287426521,
+    "used": true,
+    "usedAt": "2026-02-28T13:49:42.947Z",
+    "usedBy": "cipla@pharma.com"
+  }
+]

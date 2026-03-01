@@ -1,0 +1,495 @@
+/* ══════════════════════════════════════
+   Medicine Lookup — Premium Component
+   ══════════════════════════════════════ */
+
+.medicine-lookup {
+    padding: 32px;
+}
+
+.ml-header {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    margin-bottom: 24px;
+}
+
+.ml-icon-wrap {
+    width: 48px;
+    height: 48px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: linear-gradient(135deg, rgba(6, 182, 212, 0.15), rgba(139, 92, 246, 0.12));
+    border-radius: var(--radius-lg);
+    color: var(--brand-light);
+    animation: glow 3s ease infinite;
+}
+
+.ml-title {
+    font-size: 1.2rem;
+    font-weight: 800;
+    color: var(--text-bright);
+    background: var(--brand-gradient-vivid);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+.ml-subtitle {
+    font-size: 0.82rem;
+    color: var(--text-muted);
+    margin-top: 2px;
+}
+
+/* ── Search Bar ── */
+.ml-search-wrap {
+    position: relative;
+    margin-bottom: 16px;
+}
+
+.ml-search-bar {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 6px 6px 6px 16px;
+    background: var(--bg-surface-2);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-xl);
+    transition: all var(--transition-base);
+}
+
+.ml-search-bar:focus-within {
+    border-color: var(--brand);
+    box-shadow: 0 0 0 3px var(--brand-glow), var(--shadow-glow);
+}
+
+.ml-search-icon {
+    color: var(--text-muted);
+    flex-shrink: 0;
+}
+
+.ml-search-input {
+    flex: 1;
+    background: none;
+    border: none;
+    outline: none;
+    font-size: 0.95rem;
+    font-family: var(--font-sans);
+    color: var(--text-primary);
+    padding: 8px 0;
+}
+
+.ml-search-input::placeholder {
+    color: var(--text-muted);
+}
+
+.ml-clear-btn {
+    background: rgba(148, 163, 184, 0.15);
+    border: none;
+    border-radius: 50%;
+    width: 24px;
+    height: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    color: var(--text-muted);
+    transition: all var(--transition-fast);
+}
+
+.ml-clear-btn:hover {
+    background: rgba(239, 68, 68, 0.2);
+    color: var(--danger);
+}
+
+.ml-search-btn {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    padding: 10px 20px;
+    background: var(--brand-gradient);
+    color: #fff;
+    border: none;
+    border-radius: var(--radius-lg);
+    font-size: 0.85rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all var(--transition-base);
+    white-space: nowrap;
+    font-family: var(--font-sans);
+}
+
+.ml-search-btn:hover {
+    box-shadow: 0 4px 16px var(--brand-glow);
+    transform: translateY(-1px);
+}
+
+/* ── Suggestions Dropdown ── */
+.ml-suggestions {
+    position: absolute;
+    top: calc(100% + 4px);
+    left: 0;
+    right: 0;
+    background: var(--bg-surface-elevated);
+    backdrop-filter: blur(20px);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-lg);
+    z-index: 50;
+    overflow: hidden;
+    animation: fadeIn 0.15s ease;
+}
+
+.ml-suggestion-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    width: 100%;
+    padding: 10px 16px;
+    background: none;
+    border: none;
+    border-bottom: 1px solid var(--border-light);
+    color: var(--text-primary);
+    font-size: 0.88rem;
+    cursor: pointer;
+    transition: background var(--transition-fast);
+    text-align: left;
+    font-family: var(--font-sans);
+}
+
+.ml-suggestion-item:last-child {
+    border-bottom: none;
+}
+
+.ml-suggestion-item:hover {
+    background: rgba(6, 182, 212, 0.06);
+    color: var(--brand-light);
+}
+
+/* ── Quick Chips ── */
+.ml-chips {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 24px;
+}
+
+.ml-chips-label {
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+}
+
+.ml-chip {
+    padding: 5px 14px;
+    font-size: 0.78rem;
+    font-weight: 500;
+    background: var(--bg-glass);
+    border: 1px solid var(--border);
+    border-radius: 100px;
+    color: var(--text-secondary);
+    cursor: pointer;
+    transition: all var(--transition-base);
+    font-family: var(--font-sans);
+}
+
+.ml-chip:hover {
+    border-color: var(--brand);
+    color: var(--brand-light);
+    background: rgba(6, 182, 212, 0.08);
+    transform: translateY(-1px);
+}
+
+/* ── Loading ── */
+.ml-loading {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 12px;
+    padding: 40px;
+    color: var(--text-muted);
+    font-size: 0.88rem;
+}
+
+/* ── Results ── */
+.ml-results {
+    border-top: 1px solid var(--border-light);
+    padding-top: 24px;
+}
+
+.ml-result-header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 16px;
+    margin-bottom: 12px;
+    flex-wrap: wrap;
+}
+
+.ml-drug-name {
+    font-size: 1.3rem;
+    font-weight: 800;
+    color: var(--text-bright);
+}
+
+.ml-generic {
+    font-size: 0.82rem;
+    color: var(--text-muted);
+    font-style: italic;
+}
+
+.ml-description {
+    font-size: 0.88rem;
+    color: var(--text-secondary);
+    line-height: 1.7;
+    margin-bottom: 24px;
+}
+
+.ml-sections {
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+}
+
+.ml-section-header {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 0.88rem;
+    font-weight: 700;
+    color: var(--text-bright);
+    margin-bottom: 12px;
+}
+
+.ml-section-header h5 {
+    margin: 0;
+}
+
+/* ── Components Grid ── */
+.ml-components-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 10px;
+}
+
+.ml-component-card {
+    padding: 12px 14px;
+    background: var(--bg-glass);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    transition: all var(--transition-fast);
+}
+
+.ml-component-card:hover {
+    border-color: var(--border-glow);
+    transform: translateY(-1px);
+}
+
+.ml-comp-name {
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: var(--text-bright);
+    margin-bottom: 4px;
+}
+
+.ml-comp-meta {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 8px;
+}
+
+.ml-comp-role {
+    font-size: 0.72rem;
+    color: var(--text-muted);
+}
+
+.ml-comp-amount {
+    font-size: 0.72rem;
+    font-weight: 600;
+    font-family: var(--font-mono);
+    color: var(--brand-light);
+}
+
+/* ── Substitutes Grid ── */
+.ml-subs-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+    gap: 10px;
+}
+
+.ml-sub-card {
+    padding: 12px 14px;
+    background: var(--bg-glass);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    transition: all var(--transition-fast);
+}
+
+.ml-sub-card:hover {
+    border-color: var(--border-glow);
+    transform: translateY(-1px);
+}
+
+.ml-sub-name {
+    font-size: 0.88rem;
+    font-weight: 600;
+    color: var(--text-bright);
+    margin-bottom: 4px;
+}
+
+.ml-sub-meta {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 8px;
+    font-size: 0.75rem;
+    color: var(--text-muted);
+}
+
+/* ── No Result ── */
+.ml-no-result {
+    text-align: center;
+    padding: 40px 20px;
+    color: var(--text-muted);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 12px;
+}
+
+.ml-no-result p {
+    font-size: 0.88rem;
+}
+
+/* ── Fuzzy Match Hint ── */
+.ml-fuzzy-hint {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 8px 16px;
+    font-size: 0.78rem;
+    font-weight: 600;
+    color: var(--warning);
+    background: var(--warning-bg);
+    border-bottom: 1px solid var(--border-light);
+}
+
+.ml-suggestion-active {
+    background: rgba(90, 154, 122, 0.1) !important;
+    color: var(--brand-light) !important;
+}
+
+.ml-match {
+    color: var(--brand-light);
+    font-weight: 700;
+}
+
+.ml-fuzzy-notice {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 16px;
+    margin-bottom: 16px;
+    background: var(--warning-bg);
+    border: 1px solid rgba(196, 146, 58, 0.2);
+    border-radius: var(--radius-md);
+    font-size: 0.82rem;
+    color: var(--warning);
+}
+
+.ml-source-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 6px 14px;
+    margin-bottom: 16px;
+    background: var(--info-bg);
+    border: 1px solid rgba(90, 138, 170, 0.2);
+    border-radius: var(--radius-md);
+    font-size: 0.78rem;
+    color: var(--info);
+}
+
+/* ── Responsive ── */
+@media (max-width: 600px) {
+    .medicine-lookup {
+        padding: 20px;
+    }
+
+    .ml-components-grid,
+    .ml-subs-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .ml-search-btn {
+        padding: 8px 14px;
+        font-size: 0.8rem;
+    }
+}
+
+/* ═══ Light Mode ═══ */
+[data-theme="light"] .ml-icon-wrap {
+    background: linear-gradient(135deg, rgba(217, 119, 6, 0.12), rgba(234, 88, 12, 0.08));
+    color: #b45309;
+}
+
+[data-theme="light"] .ml-title {
+    background: linear-gradient(135deg, #92400e, #c2410c);
+    -webkit-background-clip: text;
+    background-clip: text;
+}
+
+[data-theme="light"] .ml-search-bar {
+    background: #ffffff;
+    border-color: rgba(146, 113, 26, 0.2);
+}
+
+[data-theme="light"] .ml-search-bar:focus-within {
+    border-color: #b45309;
+    box-shadow: 0 0 0 3px rgba(217, 119, 6, 0.12);
+}
+
+[data-theme="light"] .ml-search-btn {
+    background: linear-gradient(135deg, #b45309, #2563eb);
+}
+
+[data-theme="light"] .ml-suggestions {
+    background: rgba(255, 255, 255, 0.97);
+    border-color: rgba(146, 113, 26, 0.15);
+}
+
+[data-theme="light"] .ml-suggestion-item:hover {
+    background: rgba(217, 119, 6, 0.05);
+    color: #b45309;
+}
+
+[data-theme="light"] .ml-chip {
+    background: #ffffff;
+    border-color: rgba(146, 113, 26, 0.15);
+    color: #5C3D10;
+}
+
+[data-theme="light"] .ml-chip:hover {
+    border-color: #b45309;
+    color: #b45309;
+    background: rgba(217, 119, 6, 0.06);
+}
+
+[data-theme="light"] .ml-component-card,
+[data-theme="light"] .ml-sub-card {
+    background: rgba(255, 255, 255, 0.9);
+    border-color: rgba(146, 113, 26, 0.12);
+}
+
+[data-theme="light"] .ml-component-card:hover,
+[data-theme="light"] .ml-sub-card:hover {
+    border-color: rgba(217, 119, 6, 0.3);
+}
+
+[data-theme="light"] .ml-comp-amount {
+    color: #b45309;
+}

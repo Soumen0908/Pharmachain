@@ -1,0 +1,336 @@
+/* ── Transfer — QR-Based Premium ── */
+
+/* Tab bar */
+.transfer-tabs {
+    display: flex;
+    gap: 4px;
+    margin-bottom: 20px;
+    background: var(--bg-glass);
+    -webkit-backdrop-filter: blur(12px);
+    backdrop-filter: blur(12px);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-xl);
+    padding: 4px;
+    width: fit-content;
+}
+
+.tab-btn {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 10px 24px;
+    border: none;
+    background: transparent;
+    color: var(--text-secondary);
+    font-size: 0.85rem;
+    font-weight: 600;
+    border-radius: var(--radius-lg);
+    cursor: pointer;
+    transition: all 0.25s ease;
+}
+
+.tab-btn:hover {
+    color: var(--text-bright);
+    background: rgba(148, 163, 184, 0.08);
+}
+
+.tab-btn.active {
+    background: var(--brand);
+    color: #fff;
+    box-shadow: 0 2px 12px rgba(99, 102, 241, 0.3);
+}
+
+/* Layout */
+.transfer-layout {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+}
+
+.receive-layout {
+    max-width: 640px;
+    margin: 0 auto;
+}
+
+/* QR Generate section */
+.qr-generate-section {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+}
+
+.btn-generate {
+    width: 100%;
+    margin-top: 4px;
+}
+
+.qr-result {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 16px;
+    margin-top: 16px;
+    padding: 20px;
+    border-radius: var(--radius-xl);
+    background: rgba(99, 102, 241, 0.04);
+    border: 1px solid rgba(99, 102, 241, 0.12);
+}
+
+.qr-image-wrapper {
+    padding: 16px;
+    background: #fff;
+    border-radius: var(--radius-lg);
+    box-shadow: 0 4px 24px rgba(0, 0, 0, 0.15);
+}
+
+.qr-image {
+    width: 220px;
+    height: 220px;
+    display: block;
+}
+
+.qr-meta {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    width: 100%;
+}
+
+.qr-meta-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 0.82rem;
+    color: var(--text-secondary);
+}
+
+.qr-meta-row strong {
+    color: var(--text-bright);
+    min-width: 70px;
+}
+
+.qr-hint {
+    font-size: 0.75rem;
+    color: var(--text-muted);
+    text-align: center;
+    margin-top: 4px;
+}
+
+/* Upload Zone */
+.qr-upload-zone {
+    border: 2px dashed var(--border);
+    border-radius: var(--radius-xl);
+    padding: 40px 24px;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    background: rgba(148, 163, 184, 0.02);
+    margin-top: 16px;
+}
+
+.qr-upload-zone:hover {
+    border-color: var(--brand);
+    background: rgba(99, 102, 241, 0.04);
+}
+
+.qr-upload-zone.has-image {
+    border-style: solid;
+    border-color: var(--brand);
+    padding: 16px;
+    cursor: default;
+}
+
+.upload-placeholder {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+    color: var(--text-muted);
+}
+
+.upload-placeholder p {
+    font-size: 0.9rem;
+    color: var(--text-secondary);
+    font-weight: 500;
+}
+
+.upload-hint {
+    font-size: 0.72rem;
+    color: var(--text-muted);
+}
+
+.qr-preview-wrapper {
+    position: relative;
+    display: inline-block;
+}
+
+.qr-preview-image {
+    max-width: 280px;
+    max-height: 280px;
+    border-radius: var(--radius-lg);
+    display: block;
+    margin: 0 auto;
+}
+
+.qr-clear-btn {
+    position: absolute;
+    top: -8px;
+    right: -8px;
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    border: none;
+    background: var(--danger);
+    color: #fff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    box-shadow: 0 2px 8px rgba(239, 68, 68, 0.4);
+    transition: transform 0.2s;
+}
+
+.qr-clear-btn:hover {
+    transform: scale(1.1);
+}
+
+.decoding-status {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-top: 14px;
+    font-size: 0.85rem;
+    color: var(--text-secondary);
+}
+
+/* Decoded Info */
+.decoded-info {
+    margin-top: 20px;
+    padding: 20px;
+    border-radius: var(--radius-xl);
+    background: rgba(99, 102, 241, 0.05);
+    border: 1px solid rgba(99, 102, 241, 0.15);
+}
+
+.decoded-info h4 {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 0.92rem;
+    font-weight: 700;
+    color: var(--text-bright);
+    margin-bottom: 14px;
+}
+
+.decoded-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+}
+
+.decoded-row {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+
+.decoded-row span {
+    font-size: 0.72rem;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.decoded-row strong {
+    font-size: 0.85rem;
+    color: var(--text-bright);
+}
+
+.decoded-row .mono {
+    font-family: var(--font-mono);
+    font-size: 0.78rem;
+}
+
+.btn-confirm-transfer {
+    width: 100%;
+    margin-top: 18px;
+}
+
+/* Transfer Success */
+.transfer-success {
+    margin-top: 20px;
+    padding: 24px;
+    border-radius: var(--radius-xl);
+    background: rgba(16, 185, 129, 0.06);
+    border: 1px solid rgba(16, 185, 129, 0.2);
+    text-align: center;
+}
+
+.success-icon {
+    color: var(--success);
+    margin-bottom: 8px;
+}
+
+.transfer-success h4 {
+    font-size: 1.05rem;
+    font-weight: 700;
+    color: var(--success);
+    margin-bottom: 16px;
+}
+
+.transfer-success .decoded-grid {
+    text-align: left;
+}
+
+/* Receive panel */
+.receive-panel {
+    padding: 28px;
+}
+
+.receive-subtitle {
+    font-size: 0.82rem;
+    color: var(--text-muted);
+    margin-bottom: 4px;
+}
+
+/* ── Legacy styles kept for compatibility ── */
+.transfer-panel {
+    padding: 24px;
+    background: var(--bg-glass);
+    -webkit-backdrop-filter: blur(16px);
+    backdrop-filter: blur(16px);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-xl);
+    box-shadow: var(--shadow-sm);
+    transition: border-color var(--transition-base);
+}
+
+.transfer-panel:hover {
+    border-color: var(--border-glow);
+}
+
+.transfer-panel h3 {
+    font-size: 0.95rem;
+    font-weight: 700;
+    color: var(--text-bright);
+    margin-bottom: 16px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+@media (max-width: 900px) {
+    .transfer-layout {
+        grid-template-columns: 1fr;
+    }
+    .decoded-grid {
+        grid-template-columns: 1fr;
+    }
+    .transfer-tabs {
+        width: 100%;
+    }
+    .tab-btn {
+        flex: 1;
+        justify-content: center;
+    }
+}

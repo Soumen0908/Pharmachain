@@ -1,0 +1,384 @@
+/* ═══ Intro / Splash Page ═══ */
+.intro-page {
+    position: fixed;
+    inset: 0;
+    z-index: 10000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #0e0e0d;
+    background-image: url('/images/intro-bg.png');
+    background-size: cover;
+    background-position: center;
+    overflow: hidden;
+    transition: opacity 0.6s ease, transform 0.6s ease;
+}
+
+.intro-page::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: rgba(14, 14, 13, 0.7);
+    z-index: 0;
+}
+
+.intro-page.intro-exit {
+    opacity: 0;
+    transform: scale(1.05);
+}
+
+/* ── Ambient Background ── */
+.intro-bg {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+}
+
+.intro-orb {
+    position: absolute;
+    border-radius: 50%;
+    filter: blur(140px);
+    opacity: 0;
+    animation: introOrbIn 2s ease forwards;
+}
+
+.intro-orb-1 {
+    width: 700px;
+    height: 700px;
+    top: -300px;
+    left: -200px;
+    background: #5a9a7a;
+    animation-delay: 0.2s;
+}
+
+.intro-orb-2 {
+    width: 500px;
+    height: 500px;
+    bottom: -200px;
+    right: -150px;
+    background: #4a8a9a;
+    animation-delay: 0.5s;
+}
+
+.intro-orb-3 {
+    width: 300px;
+    height: 300px;
+    top: 40%;
+    left: 60%;
+    background: #8a7ab8;
+    animation-delay: 0.8s;
+}
+
+@keyframes introOrbIn {
+    to {
+        opacity: 0.12;
+    }
+}
+
+.intro-grid {
+    position: absolute;
+    inset: 0;
+    background-image:
+        linear-gradient(rgba(90, 154, 122, 0.03) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(90, 154, 122, 0.03) 1px, transparent 1px);
+    background-size: 60px 60px;
+    mask-image: radial-gradient(ellipse 70% 60% at 50% 50%, black, transparent);
+    -webkit-mask-image: radial-gradient(ellipse 70% 60% at 50% 50%, black, transparent);
+}
+
+/* ── Floating Particles ── */
+.intro-particles {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+}
+
+.intro-particle {
+    position: absolute;
+    border-radius: 50%;
+    background: rgba(90, 154, 122, 0.3);
+    animation: introFloat linear infinite;
+}
+
+@keyframes introFloat {
+
+    0%,
+    100% {
+        transform: translateY(0) scale(1);
+        opacity: 0;
+    }
+
+    10% {
+        opacity: 0.6;
+    }
+
+    50% {
+        transform: translateY(-40px) scale(1.2);
+        opacity: 0.3;
+    }
+
+    90% {
+        opacity: 0.6;
+    }
+}
+
+/* ── Content ── */
+.intro-content {
+    position: relative;
+    z-index: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    gap: 32px;
+    max-width: 700px;
+    padding: 0 24px;
+}
+
+/* ── Logo Block ── */
+.intro-logo-block {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 16px;
+    opacity: 0;
+    transform: translateY(30px) scale(0.9);
+    transition: all 1s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.intro-logo-block.visible {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+}
+
+.intro-logo {
+    width: 72px;
+    height: 72px;
+    filter: drop-shadow(0 0 30px rgba(90, 154, 122, 0.3));
+}
+
+.intro-brand {
+    font-family: 'Inter', sans-serif;
+    font-size: 3.2rem;
+    font-weight: 900;
+    letter-spacing: -0.04em;
+    background: linear-gradient(135deg, #ede9e0, #d4cfc4);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    line-height: 1;
+}
+
+.intro-tagline-badge {
+    display: inline-flex;
+    padding: 6px 18px;
+    border-radius: 100px;
+    background: rgba(90, 154, 122, 0.1);
+    border: 1px solid rgba(90, 154, 122, 0.2);
+    font-size: 0.78rem;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: #72b895;
+}
+
+/* ── Mission ── */
+.intro-mission {
+    opacity: 0;
+    transform: translateY(20px);
+    transition: all 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.intro-mission.visible {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+.intro-mission-text {
+    font-size: 1.15rem;
+    line-height: 1.8;
+    color: #908a7d;
+    font-weight: 400;
+}
+
+.intro-highlight {
+    color: #ede9e0;
+    font-weight: 700;
+}
+
+/* ── Pillars ── */
+.intro-pillars {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    opacity: 0;
+    transform: translateY(20px);
+    transition: all 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.intro-pillars.visible {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+.intro-pillar {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+}
+
+.intro-pillar-icon {
+    width: 48px;
+    height: 48px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 14px;
+    background: rgba(90, 154, 122, 0.08);
+    border: 1px solid rgba(90, 154, 122, 0.12);
+    font-size: 1.3rem;
+}
+
+.intro-pillar span {
+    font-size: 0.78rem;
+    font-weight: 600;
+    color: #908a7d;
+    letter-spacing: 0.01em;
+}
+
+.intro-pillar-divider {
+    width: 1px;
+    height: 40px;
+    background: linear-gradient(180deg, transparent, rgba(90, 154, 122, 0.2), transparent);
+}
+
+/* ── CTA ── */
+.intro-cta {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 16px;
+    opacity: 0;
+    transform: translateY(20px);
+    transition: all 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.intro-cta.visible {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+.intro-enter-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    padding: 16px 36px;
+    font-size: 1rem;
+    font-weight: 700;
+    font-family: 'Inter', sans-serif;
+    color: white;
+    background: linear-gradient(135deg, #5a9a7a, #4a8a9a);
+    border: none;
+    border-radius: 14px;
+    cursor: pointer;
+    transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+    box-shadow:
+        0 4px 20px rgba(90, 154, 122, 0.25),
+        0 0 0 0 rgba(90, 154, 122, 0);
+    position: relative;
+    overflow: hidden;
+}
+
+.intro-enter-btn::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(135deg, rgba(255, 255, 255, 0.1), transparent);
+    opacity: 0;
+    transition: opacity 0.3s;
+}
+
+.intro-enter-btn:hover {
+    transform: translateY(-2px) scale(1.02);
+    box-shadow:
+        0 8px 32px rgba(90, 154, 122, 0.35),
+        0 0 0 4px rgba(90, 154, 122, 0.1);
+}
+
+.intro-enter-btn:hover::before {
+    opacity: 1;
+}
+
+.intro-enter-btn:active {
+    transform: translateY(0) scale(0.98);
+}
+
+.intro-enter-btn svg {
+    transition: transform 0.3s;
+}
+
+.intro-enter-btn:hover svg {
+    transform: translateX(4px);
+}
+
+.intro-skip {
+    font-size: 0.75rem;
+    color: #666259;
+    letter-spacing: 0.02em;
+}
+
+/* ── Bottom Line ── */
+.intro-bottom-line {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 2px;
+    background: linear-gradient(90deg,
+            transparent,
+            rgba(90, 154, 122, 0.4),
+            rgba(74, 138, 154, 0.4),
+            rgba(138, 122, 184, 0.3),
+            transparent);
+    animation: introLineShimmer 3s ease-in-out infinite;
+}
+
+@keyframes introLineShimmer {
+
+    0%,
+    100% {
+        opacity: 0.4;
+    }
+
+    50% {
+        opacity: 1;
+    }
+}
+
+/* ── Responsive ── */
+@media (max-width: 768px) {
+    .intro-brand {
+        font-size: 2.4rem;
+    }
+
+    .intro-mission-text {
+        font-size: 1rem;
+    }
+
+    .intro-pillars {
+        flex-direction: column;
+        gap: 16px;
+    }
+
+    .intro-pillar-divider {
+        width: 40px;
+        height: 1px;
+        background: linear-gradient(90deg, transparent, rgba(90, 154, 122, 0.2), transparent);
+    }
+
+    .intro-enter-btn {
+        padding: 14px 28px;
+        font-size: 0.95rem;
+    }
+}

@@ -1,0 +1,58 @@
+/* ═══ Manufacturer Auth Theme Overrides ═══ */
+.manufacturer-auth .auth-orb-1 {
+    background: #5a8aaa;
+}
+
+.manufacturer-auth .auth-orb-2 {
+    background: #8a7ab8;
+}
+
+.mfr-badge {
+    background: rgba(90, 138, 170, 0.1) !important;
+    border-color: rgba(90, 138, 170, 0.2) !important;
+    color: #5a8aaa !important;
+}
+
+.manufacturer-auth .auth-tab.active {
+    background: #5a8aaa;
+    box-shadow: 0 2px 12px rgba(90, 138, 170, 0.3);
+}
+
+.manufacturer-auth .auth-field input:focus,
+.manufacturer-auth .auth-field select:focus {
+    border-color: #5a8aaa;
+    box-shadow: 0 0 0 3px rgba(90, 138, 170, 0.1);
+}
+
+.btn-blue {
+    background: linear-gradient(135deg, #5a8aaa, #8a7ab8);
+    color: white;
+    border: none;
+    border-radius: 12px;
+    cursor: pointer;
+    transition: all 0.25s;
+}
+
+.btn-blue:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 6px 20px rgba(90, 138, 170, 0.3);
+}
+
+.btn-blue:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+    transform: none;
+}
+
+.gradient-text-blue {
+    background: linear-gradient(135deg, #5a8aaa, #8a7ab8);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+.auth-field-hint {
+    font-size: 0.75rem;
+    color: var(--text-muted);
+    margin-top: 6px;
+}

@@ -1,0 +1,583 @@
+/* ═══════════════════════════════════════════════════════════════
+   AnimatedBackground — Interactive floating pharma images, icons & orbs
+   Mouse-tracking parallax, hover glow, click pulse, CSS animations
+   ═══════════════════════════════════════════════════════════════ */
+
+.animated-bg {
+    position: fixed;
+    inset: 0;
+    z-index: -1;
+    pointer-events: none;
+    overflow: hidden;
+}
+
+/* Galaxy canvas container — full viewport behind everything */
+.galaxy-layer {
+    position: absolute;
+    inset: 0;
+    z-index: 0;
+    pointer-events: auto;
+}
+
+/* ══ Background Images — Interactive ══ */
+.bg-img {
+    position: absolute;
+    opacity: 0.09;
+    will-change: transform, opacity, filter;
+    object-fit: contain;
+    filter: blur(0.5px) saturate(1.3);
+    pointer-events: auto;
+    cursor: pointer;
+    transition: opacity 0.6s ease, filter 0.6s ease, box-shadow 0.6s ease;
+    /* Parallax CSS vars set by JS */
+    --px: 0px;
+    --py: 0px;
+    border-radius: 16px;
+}
+
+/* Hover — glow brighter, sharpen, scale up */
+.bg-img:hover {
+    opacity: 0.22;
+    filter: blur(0px) saturate(1.6) brightness(1.2);
+    box-shadow: 0 0 60px rgba(6, 182, 212, 0.15), 0 0 120px rgba(6, 182, 212, 0.08);
+}
+
+/* Click pulse animation */
+.bg-img-pulse {
+    animation: imgClickPulse 0.8s ease-out !important;
+}
+
+@keyframes imgClickPulse {
+    0% {
+        transform: translate(var(--px), var(--py)) scale(1);
+        filter: blur(0px) saturate(1.8) brightness(1.5);
+        opacity: 0.35;
+    }
+
+    50% {
+        transform: translate(var(--px), var(--py)) scale(1.12);
+    }
+
+    100% {
+        transform: translate(var(--px), var(--py)) scale(1);
+        filter: blur(0.5px) saturate(1.3);
+        opacity: 0.09;
+    }
+}
+
+.bg-img-1 {
+    width: 340px;
+    top: 5%;
+    right: -2%;
+    animation: imgFloat1 25s ease-in-out infinite;
+    transform: translate(var(--px), var(--py));
+}
+
+.bg-img-2 {
+    width: 280px;
+    bottom: 8%;
+    left: -3%;
+    animation: imgFloat2 30s ease-in-out infinite;
+    transform: translate(var(--px), var(--py));
+}
+
+.bg-img-3 {
+    width: 300px;
+    top: 40%;
+    right: 20%;
+    animation: imgFloat3 28s ease-in-out infinite;
+    transform: translate(var(--px), var(--py));
+}
+
+/* Image float + parallax keyframes */
+@keyframes imgFloat1 {
+
+    0%,
+    100% {
+        transform: translate(var(--px), var(--py)) rotate(0deg) scale(1);
+        opacity: 0.09;
+    }
+
+    25% {
+        transform: translate(calc(var(--px) - 20px), calc(var(--py) + 15px)) rotate(3deg) scale(1.04);
+        opacity: 0.12;
+    }
+
+    50% {
+        transform: translate(calc(var(--px) - 35px), calc(var(--py) - 10px)) rotate(-2deg) scale(0.98);
+        opacity: 0.08;
+    }
+
+    75% {
+        transform: translate(calc(var(--px) - 10px), calc(var(--py) + 20px)) rotate(4deg) scale(1.02);
+        opacity: 0.11;
+    }
+}
+
+@keyframes imgFloat2 {
+
+    0%,
+    100% {
+        transform: translate(var(--px), var(--py)) rotate(0deg) scale(1);
+        opacity: 0.09;
+    }
+
+    30% {
+        transform: translate(calc(var(--px) + 25px), calc(var(--py) - 20px)) rotate(-3deg) scale(1.06);
+        opacity: 0.12;
+    }
+
+    60% {
+        transform: translate(calc(var(--px) + 40px), calc(var(--py) + 10px)) rotate(4deg) scale(0.96);
+        opacity: 0.07;
+    }
+}
+
+@keyframes imgFloat3 {
+
+    0%,
+    100% {
+        transform: translate(var(--px), var(--py)) rotate(0deg) scale(1);
+        opacity: 0.09;
+    }
+
+    35% {
+        transform: translate(calc(var(--px) - 15px), calc(var(--py) + 25px)) rotate(5deg) scale(1.05);
+        opacity: 0.11;
+    }
+
+    70% {
+        transform: translate(calc(var(--px) + 20px), calc(var(--py) - 15px)) rotate(-4deg) scale(0.97);
+        opacity: 0.08;
+    }
+}
+
+/* ── Floating pharma SVG icons — with parallax ── */
+.bg-icon {
+    position: absolute;
+    opacity: 0.06;
+    color: var(--brand);
+    filter: blur(0.5px);
+    will-change: transform;
+    --px: 0px;
+    --py: 0px;
+    transition: opacity 0.4s ease, color 0.4s ease, filter 0.4s ease;
+}
+
+.bg-icon:hover {
+    opacity: 0.15;
+    filter: blur(0px) drop-shadow(0 0 8px var(--brand-glow));
+}
+
+.bg-icon-1 {
+    top: 8%;
+    left: 5%;
+    animation: bgFloat1 18s ease-in-out infinite;
+}
+
+.bg-icon-2 {
+    top: 65%;
+    left: 12%;
+    animation: bgFloat2 22s ease-in-out infinite;
+}
+
+.bg-icon-3 {
+    top: 20%;
+    right: 8%;
+    animation: bgFloat3 20s ease-in-out infinite;
+}
+
+.bg-icon-4 {
+    top: 75%;
+    right: 15%;
+    animation: bgFloat4 24s ease-in-out infinite;
+}
+
+.bg-icon-5 {
+    top: 40%;
+    left: 45%;
+    animation: bgFloat5 26s ease-in-out infinite;
+}
+
+.bg-icon-6 {
+    top: 15%;
+    left: 70%;
+    animation: bgFloat6 19s ease-in-out infinite;
+}
+
+.bg-icon-7 {
+    top: 85%;
+    left: 55%;
+    animation: bgFloat7 21s ease-in-out infinite;
+}
+
+.bg-icon-8 {
+    top: 50%;
+    left: 25%;
+    animation: bgFloat8 23s ease-in-out infinite;
+}
+
+/* ── Glowing orbs ── */
+.bg-orb {
+    position: absolute;
+    border-radius: 50%;
+    filter: blur(60px);
+    will-change: transform, opacity;
+}
+
+.bg-orb-1 {
+    width: 300px;
+    height: 300px;
+    background: radial-gradient(circle, rgba(6, 182, 212, 0.12), transparent 70%);
+    top: 10%;
+    left: -5%;
+    animation: orbPulse1 12s ease-in-out infinite;
+}
+
+.bg-orb-2 {
+    width: 250px;
+    height: 250px;
+    background: radial-gradient(circle, rgba(139, 92, 246, 0.10), transparent 70%);
+    top: 60%;
+    right: -3%;
+    animation: orbPulse2 15s ease-in-out infinite;
+}
+
+.bg-orb-3 {
+    width: 200px;
+    height: 200px;
+    background: radial-gradient(circle, rgba(59, 130, 246, 0.08), transparent 70%);
+    top: 35%;
+    left: 60%;
+    animation: orbPulse3 18s ease-in-out infinite;
+}
+
+.bg-orb-4 {
+    width: 180px;
+    height: 180px;
+    background: radial-gradient(circle, rgba(16, 185, 129, 0.08), transparent 70%);
+    bottom: 10%;
+    left: 20%;
+    animation: orbPulse4 14s ease-in-out infinite;
+}
+
+.bg-orb-5 {
+    width: 220px;
+    height: 220px;
+    background: radial-gradient(circle, rgba(6, 182, 212, 0.06), transparent 70%);
+    top: 5%;
+    right: 25%;
+    animation: orbPulse5 16s ease-in-out infinite;
+}
+
+/* ══ Icon Float Keyframes with parallax ══ */
+@keyframes bgFloat1 {
+
+    0%,
+    100% {
+        transform: translate(var(--px), var(--py)) rotate(0deg) scale(1);
+    }
+
+    25% {
+        transform: translate(calc(var(--px) + 20px), calc(var(--py) - 30px)) rotate(8deg) scale(1.05);
+    }
+
+    50% {
+        transform: translate(calc(var(--px) - 10px), calc(var(--py) - 50px)) rotate(-5deg) scale(0.95);
+    }
+
+    75% {
+        transform: translate(calc(var(--px) + 15px), calc(var(--py) - 20px)) rotate(12deg) scale(1.02);
+    }
+}
+
+@keyframes bgFloat2 {
+
+    0%,
+    100% {
+        transform: translate(var(--px), var(--py)) rotate(0deg);
+    }
+
+    33% {
+        transform: translate(calc(var(--px) - 25px), calc(var(--py) - 40px)) rotate(-10deg);
+    }
+
+    66% {
+        transform: translate(calc(var(--px) + 15px), calc(var(--py) - 60px)) rotate(6deg);
+    }
+}
+
+@keyframes bgFloat3 {
+
+    0%,
+    100% {
+        transform: translate(var(--px), var(--py)) rotate(0deg) scale(1);
+    }
+
+    30% {
+        transform: translate(calc(var(--px) - 30px), calc(var(--py) + 20px)) rotate(15deg) scale(1.08);
+    }
+
+    60% {
+        transform: translate(calc(var(--px) + 10px), calc(var(--py) - 35px)) rotate(-8deg) scale(0.92);
+    }
+}
+
+@keyframes bgFloat4 {
+
+    0%,
+    100% {
+        transform: translate(var(--px), var(--py)) rotate(0deg);
+    }
+
+    25% {
+        transform: translate(calc(var(--px) + 20px), calc(var(--py) - 25px)) rotate(-12deg);
+    }
+
+    50% {
+        transform: translate(calc(var(--px) - 15px), calc(var(--py) - 45px)) rotate(8deg);
+    }
+
+    75% {
+        transform: translate(calc(var(--px) + 25px), calc(var(--py) - 15px)) rotate(-5deg);
+    }
+}
+
+@keyframes bgFloat5 {
+
+    0%,
+    100% {
+        transform: translate(var(--px), var(--py)) rotate(0deg) scale(1);
+    }
+
+    40% {
+        transform: translate(calc(var(--px) - 20px), calc(var(--py) - 30px)) rotate(10deg) scale(1.1);
+    }
+
+    70% {
+        transform: translate(calc(var(--px) + 25px), calc(var(--py) - 50px)) rotate(-12deg) scale(0.9);
+    }
+}
+
+@keyframes bgFloat6 {
+
+    0%,
+    100% {
+        transform: translate(var(--px), var(--py)) rotate(0deg);
+    }
+
+    35% {
+        transform: translate(calc(var(--px) + 15px), calc(var(--py) + 25px)) rotate(-8deg);
+    }
+
+    65% {
+        transform: translate(calc(var(--px) - 20px), calc(var(--py) - 20px)) rotate(14deg);
+    }
+}
+
+@keyframes bgFloat7 {
+
+    0%,
+    100% {
+        transform: translate(var(--px), var(--py)) rotate(0deg) scale(1);
+    }
+
+    30% {
+        transform: translate(calc(var(--px) - 10px), calc(var(--py) - 35px)) rotate(6deg) scale(1.05);
+    }
+
+    60% {
+        transform: translate(calc(var(--px) + 20px), calc(var(--py) - 15px)) rotate(-10deg) scale(0.95);
+    }
+}
+
+@keyframes bgFloat8 {
+
+    0%,
+    100% {
+        transform: translate(var(--px), var(--py)) rotate(0deg);
+    }
+
+    50% {
+        transform: translate(calc(var(--px) + 30px), calc(var(--py) - 40px)) rotate(12deg);
+    }
+}
+
+/* ══ Orb Pulse Keyframes ══ */
+@keyframes orbPulse1 {
+
+    0%,
+    100% {
+        transform: translate(0, 0) scale(1);
+        opacity: 0.7;
+    }
+
+    50% {
+        transform: translate(30px, 20px) scale(1.2);
+        opacity: 1;
+    }
+}
+
+@keyframes orbPulse2 {
+
+    0%,
+    100% {
+        transform: translate(0, 0) scale(1);
+        opacity: 0.6;
+    }
+
+    50% {
+        transform: translate(-25px, -30px) scale(1.15);
+        opacity: 0.9;
+    }
+}
+
+@keyframes orbPulse3 {
+
+    0%,
+    100% {
+        transform: translate(0, 0) scale(1);
+        opacity: 0.5;
+    }
+
+    50% {
+        transform: translate(20px, 15px) scale(1.3);
+        opacity: 0.8;
+    }
+}
+
+@keyframes orbPulse4 {
+
+    0%,
+    100% {
+        transform: translate(0, 0) scale(1);
+        opacity: 0.6;
+    }
+
+    50% {
+        transform: translate(-20px, -25px) scale(1.1);
+        opacity: 0.9;
+    }
+}
+
+@keyframes orbPulse5 {
+
+    0%,
+    100% {
+        transform: translate(0, 0) scale(1);
+        opacity: 0.5;
+    }
+
+    50% {
+        transform: translate(15px, 20px) scale(1.25);
+        opacity: 0.85;
+    }
+}
+
+/* ══ Light Theme ══ */
+[data-theme="light"] .bg-img {
+    opacity: 0.15;
+    /* invert(1) flips dark bg → white; multiply makes white invisible */
+    filter: invert(1) blur(1px) saturate(0.6) brightness(0.85) hue-rotate(15deg);
+    mix-blend-mode: multiply;
+}
+
+[data-theme="light"] .bg-img:hover {
+    opacity: 0.28;
+    filter: invert(1) blur(0px) saturate(0.8) brightness(0.9) hue-rotate(15deg);
+    box-shadow: none;
+}
+
+[data-theme="light"] .bg-icon {
+    opacity: 0.045;
+    color: var(--brand-dark);
+}
+
+[data-theme="light"] .bg-icon:hover {
+    opacity: 0.12;
+    filter: blur(0px) drop-shadow(0 0 8px rgba(217, 119, 6, 0.3));
+}
+
+[data-theme="light"] .bg-orb-1 {
+    background: radial-gradient(circle, rgba(217, 119, 6, 0.07), transparent 70%);
+}
+
+[data-theme="light"] .bg-orb-2 {
+    background: radial-gradient(circle, rgba(126, 34, 206, 0.05), transparent 70%);
+}
+
+[data-theme="light"] .bg-orb-3 {
+    background: radial-gradient(circle, rgba(37, 99, 235, 0.04), transparent 70%);
+}
+
+[data-theme="light"] .bg-orb-4 {
+    background: radial-gradient(circle, rgba(21, 128, 61, 0.05), transparent 70%);
+}
+
+[data-theme="light"] .bg-orb-5 {
+    background: radial-gradient(circle, rgba(217, 119, 6, 0.04), transparent 70%);
+}
+
+/* ══ Responsive ══ */
+@media (max-width: 768px) {
+    .bg-img {
+        opacity: 0.05;
+    }
+
+    .bg-img-3 {
+        display: none;
+    }
+
+    .bg-img-1 {
+        width: 220px;
+    }
+
+    .bg-img-2 {
+        width: 180px;
+    }
+
+    .bg-icon {
+        opacity: 0.03;
+    }
+
+    .bg-icon-5,
+    .bg-icon-6,
+    .bg-icon-7,
+    .bg-icon-8 {
+        display: none;
+    }
+
+    .bg-orb {
+        filter: blur(80px);
+    }
+
+    .bg-orb-3,
+    .bg-orb-5 {
+        display: none;
+    }
+
+    .bg-orb-1 {
+        width: 200px;
+        height: 200px;
+    }
+
+    .bg-orb-2 {
+        width: 180px;
+        height: 180px;
+    }
+
+    .bg-orb-4 {
+        width: 150px;
+        height: 150px;
+    }
+}
+
+/* ══ Reduce motion ══ */
+@media (prefers-reduced-motion: reduce) {
+
+    .bg-icon,
+    .bg-orb,
+    .bg-img {
+        animation: none !important;
+    }
+}

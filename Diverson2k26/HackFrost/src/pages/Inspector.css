@@ -1,0 +1,87 @@
+/* ── Inspector — Premium ── */
+.inspector-layout {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+}
+
+.inspector-panel {
+    padding: 24px;
+    background: var(--bg-glass);
+    backdrop-filter: blur(16px);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-xl);
+    box-shadow: var(--shadow-sm);
+    transition: border-color var(--transition-base);
+}
+
+.inspector-panel:hover {
+    border-color: var(--border-glow);
+}
+
+.inspector-panel h3 {
+    font-size: 0.95rem;
+    font-weight: 700;
+    color: var(--text-bright);
+    margin-bottom: 16px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.inspect-form {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+}
+
+.inspect-result {
+    margin-top: 16px;
+    padding: 14px;
+    border-radius: var(--radius-lg);
+}
+
+.inspect-result.approved {
+    background: var(--success-bg);
+    border: 1px solid rgba(16, 185, 129, 0.2);
+    color: var(--success);
+}
+
+.inspect-result.rejected {
+    background: var(--danger-bg);
+    border: 1px solid rgba(239, 68, 68, 0.2);
+    color: var(--danger);
+}
+
+.inspection-list {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.inspection-item {
+    padding: 12px 14px;
+    background: rgba(148, 163, 184, 0.04);
+    border-radius: var(--radius-lg);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    border: 1px solid var(--border-light);
+}
+
+.inspection-id {
+    font-family: var(--font-mono);
+    font-size: 0.78rem;
+    color: var(--brand-light);
+}
+
+.inspection-time {
+    font-size: 0.72rem;
+    color: var(--text-muted);
+}
+
+@media (max-width: 900px) {
+    .inspector-layout {
+        grid-template-columns: 1fr;
+    }
+}

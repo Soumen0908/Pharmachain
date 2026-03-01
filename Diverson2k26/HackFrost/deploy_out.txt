@@ -1,0 +1,4 @@
+SUCCESS
+🚀 Deploying PharmaChain...
+✅ PharmaChain deployed to: 0x5FbDB2315678afecb367f032d93F642f64180aa3
+📄 Contract ABI and address saved to src/utils/contractConfig.json

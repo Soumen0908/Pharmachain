@@ -1,0 +1,79 @@
+SUCCESS
+
+🔐 Granting roles...
+  ✅ Manufacturer: 0x70997970C51812dc3A010C7d01b50e0d17dc79C8
+  ✅ Distributor: 0x3C44CdDdB6a900fa2b585dd299e03d12FA4293BC
+  ✅ Retailer: 0x90F79bf6EB2c4f870365E785982E1f101E93b906
+  ✅ Inspector: 0x15d34AAf54267DB7D7c367839AAf71A00a2C6A65
+
+💊 Creating sample batches...
+  ✅ Created: Paracetamol 500mg (PCM-2026-001) | Scratch: XKRF82NP
+  ✅ Created: Amoxicillin 250mg (AMX-2026-002) | Scratch: M3QW9TYA
+  ✅ Created: Metformin 500mg (MET-2026-003) | Scratch: J7LP4XCR
+  ✅ Created: COVID Vaccine Dose (COV-2026-004) | Scratch: VX92KFBN
+  ✅ Created: Ibuprofen 400mg (IBU-2026-005) | Scratch: QZ5D8MVH
+
+📦 Simulating supply chain for Paracetamol 500mg...
+  ✅ Transferred to Distributor
+  ✅ Distributor acknowledged receipt
+  ✅ Transferred to Retailer
+  ✅ Retailer acknowledged receipt
+  ✅ Inspector approved for sale
+
+📦 Partial transfer for Amoxicillin 250mg...
+  ✅ Transferred to Distributor
+  ✅ Distributor acknowledged receipt
+
+🚩 Flagging Metformin batch (for demo)...
+  ✅ Batch flagged by Inspector
+
+🎉 Seed complete! Metadata for QR codes:
+{
+  "PCM-2026-001": {
+    "drugName": "Paracetamol 500mg",
+    "batchId": "PCM-2026-001",
+    "expiryDate": "2027-06-15",
+    "manufacturingLocation": "Mumbai, India",
+    "scratchCode": "XKRF82NP",
+    "batchIdHash": "0x5a65ad2ce2c98fc573b4dc6a7ab697bc8605c3bc376c5f2a037e8e69ae25b233"
+  },
+  "AMX-2026-002": {
+    "drugName": "Amoxicillin 250mg",
+    "batchId": "AMX-2026-002",
+    "expiryDate": "2027-03-20",
+    "manufacturingLocation": "Hyderabad, India",
+    "scratchCode": "M3QW9TYA",
+    "batchIdHash": "0x8880706e93fe9a65bdeab3d8cea68862db58a4aaf85ec96ba68156febe4876e0"
+  },
+  "MET-2026-003": {
+    "drugName": "Metformin 500mg",
+    "batchId": "MET-2026-003",
+    "expiryDate": "2027-09-01",
+    "manufacturingLocation": "Pune, India",
+    "scratchCode": "J7LP4XCR",
+    "batchIdHash": "0x0b650d3e4a9d9df27afde514bd0302df4085ad98cfaaad5c86afa4635fc059cc"
+  },
+  "COV-2026-004": {
+    "drugName": "COVID Vaccine Dose",
+    "batchId": "COV-2026-004",
+    "expiryDate": "2026-08-30",
+    "manufacturingLocation": "Ahmedabad, India",
+    "scratchCode": "VX92KFBN",
+    "batchIdHash": "0xc47d3cdc11ddeb05a0d9c4c62881e77f836568637aeb20232f5a5c143667e7a2"
+  },
+  "IBU-2026-005": {
+    "drugName": "Ibuprofen 400mg",
+    "batchId": "IBU-2026-005",
+    "expiryDate": "2027-12-31",
+    "manufacturingLocation": "Chennai, India",
+    "scratchCode": "QZ5D8MVH",
+    "batchIdHash": "0x23a5d0e8cd79fa3ab3f89fe51caed26143e470858e24bd2705e2617b35dd9133"
+  }
+}
+
+📋 Accounts:
+  Owner:        0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266
+  Manufacturer: 0x70997970C51812dc3A010C7d01b50e0d17dc79C8
+  Distributor:  0x3C44CdDdB6a900fa2b585dd299e03d12FA4293BC
+  Retailer:     0x90F79bf6EB2c4f870365E785982E1f101E93b906
+  Inspector:    0x15d34AAf54267DB7D7c367839AAf71A00a2C6A65
