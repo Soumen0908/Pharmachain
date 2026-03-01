@@ -28,6 +28,22 @@ app.use('/api/blockchain', blockchainRoutes);
 app.use('/api/gemini', geminiRoutes);
 app.use('/api/live', liveRoutes);
 
+// RPC proxy — lets the frontend (and MetaMask) reach the Hardhat node through the API
+app.post('/rpc', async (req, res) => {
+    try {
+        const rpcUrl = process.env.RPC_URL || 'http://127.0.0.1:8545';
+        const response = await fetch(rpcUrl, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(req.body),
+        });
+        const data = await response.json();
+        res.json(data);
+    } catch (err) {
+        res.status(502).json({ jsonrpc: '2.0', error: { code: -32603, message: 'Blockchain node unreachable' }, id: req.body?.id || null });
+    }
+});
+
 // Health check
 app.get('/api/health', (req, res) => {
     res.json({ status: 'ok', timestamp: new Date().toISOString() });

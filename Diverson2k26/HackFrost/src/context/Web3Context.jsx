@@ -14,10 +14,14 @@ const ROLE_NAMES = ['None', 'Manufacturer', 'Distributor', 'Retailer', 'Inspecto
 // Hardhat localhost network details
 const HARDHAT_CHAIN_ID = '0x7A69'; // 31337
 const HARDHAT_CHAIN_ID_DEC = 31337;
+
+// RPC URL — in production, points to the backend's /rpc proxy
+const RPC_URL = import.meta.env.VITE_RPC_URL || 'http://127.0.0.1:8545';
+
 const HARDHAT_NETWORK = {
     chainId: HARDHAT_CHAIN_ID,
-    chainName: 'Hardhat Localhost',
-    rpcUrls: ['http://127.0.0.1:8545'],
+    chainName: 'PharmaChain Network',
+    rpcUrls: [RPC_URL],
     nativeCurrency: { name: 'Ether', symbol: 'ETH', decimals: 18 },
 };
 
@@ -56,9 +60,23 @@ export function Web3Provider({ children }) {
     const [error, setError] = useState('');
     const [contractConfig, setContractConfig] = useState(DEFAULT_CONFIG);
 
-    // Load contract config
+    // Load contract config — try API first (production), fall back to bundled file (dev)
     useEffect(() => {
         async function loadConfig() {
+            // 1. Try fetching from backend API (works with live-deployed contract)
+            try {
+                const apiBase = import.meta.env.VITE_API_URL || 'http://localhost:3001/api';
+                const res = await fetch(`${apiBase}/blockchain/contract-config`);
+                if (res.ok) {
+                    const config = await res.json();
+                    if (config.address && config.abi) {
+                        setContractConfig(config);
+                        return;
+                    }
+                }
+            } catch {}
+
+            // 2. Fall back to bundled contractConfig.json (local dev)
             try {
                 const config = await import('../utils/contractConfig.json');
                 setContractConfig(config.default || config);
@@ -73,7 +91,7 @@ export function Web3Provider({ children }) {
     useEffect(() => {
         if (contractConfig.address === DEFAULT_CONFIG.address) return;
         try {
-            const readProvider = new ethers.JsonRpcProvider(import.meta.env.VITE_RPC_URL || 'http://127.0.0.1:8545');
+            const readProvider = new ethers.JsonRpcProvider(RPC_URL);
             const readContract = new ethers.Contract(contractConfig.address, contractConfig.abi, readProvider);
             setReadOnlyContract(readContract);
         } catch (e) {

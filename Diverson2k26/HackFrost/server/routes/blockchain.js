@@ -20,6 +20,16 @@ const {
 
 const router = express.Router();
 
+// ── Serve live contract config (address + ABI) to the frontend ──
+router.get('/contract-config', (req, res) => {
+    try {
+        const config = blockchain.loadConfig();
+        res.json({ address: config.address, abi: config.abi });
+    } catch (e) {
+        res.status(503).json({ error: 'Contract not deployed yet' });
+    }
+});
+
 // ── Auth middleware (reuse existing session-based auth) ──
 function requireAuth(req, res, next) {
     const token = req.headers.authorization?.replace('Bearer ', '');
