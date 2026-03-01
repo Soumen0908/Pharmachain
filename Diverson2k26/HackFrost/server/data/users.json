@@ -173,5 +173,30 @@
     },
     "createdAt": "2026-03-01T06:54:03.953Z",
     "updatedAt": "2026-03-01T06:54:03.953Z"
+  },
+  {
+    "id": "a2459ea2-6129-4a9a-9dba-a49cc53b39c0",
+    "email": "soumenhati760@gmail.com",
+    "password": "Souma@26",
+    "name": "soumen hati",
+    "phone": "",
+    "role": "manufacturer",
+    "address": "",
+    "avatar": "",
+    "emailVerified": true,
+    "companyName": "Hati Ltd",
+    "licenseNumber": "MH 01-56887",
+    "govtIdProof": "",
+    "govtIdVerified": false,
+    "savedMedicines": [],
+    "searchHistory": [],
+    "expiryAlerts": [],
+    "preferences": {
+      "notifications": true,
+      "darkMode": true,
+      "language": "en"
+    },
+    "createdAt": "2026-03-01T08:25:46.686Z",
+    "updatedAt": "2026-03-01T08:25:46.686Z"
   }
 ]

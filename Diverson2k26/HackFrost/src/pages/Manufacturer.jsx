@@ -1,10 +1,10 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { QRCodeSVG } from 'qrcode.react';
 import { useAuth } from '../context/AuthContext';
 import { useToast } from '../components/Toast';
 import { registerBatch, getMyBatches } from '../services/api';
-import { PlusCircle, CheckCircle2, Clock, AlertTriangle, Pill, Inbox, Key, Package, Calendar, DollarSign, Beaker, Hash, Factory, Download, Shield } from 'lucide-react';
+import { PlusCircle, CheckCircle2, Clock, AlertTriangle, Pill, Inbox, Key, Package, Calendar, DollarSign, Beaker, Hash, Factory, Download, Shield, Image as ImageIcon } from 'lucide-react';
 import './Manufacturer.css';
 
 export default function Manufacturer() {
@@ -21,6 +21,93 @@ export default function Manufacturer() {
     const [loading, setLoading] = useState(false);
     const [fetchingBatches, setFetchingBatches] = useState(true);
     const [error, setError] = useState('');
+    const qrRef = useRef(null);
+
+    // Download QR code as a styled PNG with batch details
+    function downloadQR() {
+        if (!createdBatch || !qrRef.current) return;
+        const svgEl = qrRef.current.querySelector('svg');
+        if (!svgEl) return;
+
+        const svgData = new XMLSerializer().serializeToString(svgEl);
+        const svgBlob = new Blob([svgData], { type: 'image/svg+xml;charset=utf-8' });
+        const url = URL.createObjectURL(svgBlob);
+        const img = new window.Image();
+
+        img.onload = () => {
+            const pad = 40;
+            const qrSize = 280;
+            const w = qrSize + pad * 2;
+            const headerH = 60;
+            const infoH = 120;
+            const h = headerH + qrSize + infoH + pad * 2;
+
+            const canvas = document.createElement('canvas');
+            canvas.width = w;
+            canvas.height = h;
+            const ctx = canvas.getContext('2d');
+
+            // Background
+            ctx.fillStyle = '#0a0e1a';
+            ctx.fillRect(0, 0, w, h);
+
+            // Top accent bar
+            const grad = ctx.createLinearGradient(0, 0, w, 0);
+            grad.addColorStop(0, '#06b6d4');
+            grad.addColorStop(1, '#8b5cf6');
+            ctx.fillStyle = grad;
+            ctx.fillRect(0, 0, w, 4);
+
+            // Header text
+            ctx.fillStyle = '#06b6d4';
+            ctx.font = 'bold 16px system-ui, sans-serif';
+            ctx.textAlign = 'center';
+            ctx.fillText('PharmaChain', w / 2, 30);
+            ctx.fillStyle = 'rgba(255,255,255,0.5)';
+            ctx.font = '11px system-ui, sans-serif';
+            ctx.fillText('Blockchain Verified Medicine', w / 2, 48);
+
+            // QR code
+            const qrX = (w - qrSize) / 2;
+            const qrY = headerH;
+            ctx.drawImage(img, qrX, qrY, qrSize, qrSize);
+
+            // Info section
+            const infoY = headerH + qrSize + 16;
+            ctx.textAlign = 'center';
+            ctx.fillStyle = '#ffffff';
+            ctx.font = 'bold 14px system-ui, sans-serif';
+            ctx.fillText(createdBatch.medicineName, w / 2, infoY);
+
+            ctx.fillStyle = 'rgba(255,255,255,0.6)';
+            ctx.font = '12px monospace';
+            ctx.fillText(createdBatch.batchNumber, w / 2, infoY + 22);
+
+            ctx.fillStyle = '#06b6d4';
+            ctx.font = 'bold 12px system-ui, sans-serif';
+            ctx.fillText(`Scratch: ${createdBatch.scratchCode}`, w / 2, infoY + 46);
+
+            ctx.fillStyle = 'rgba(255,255,255,0.35)';
+            ctx.font = '9px system-ui, sans-serif';
+            ctx.fillText(`QR Hash: ${createdBatch.qrHash?.slice(0, 24)}...`, w / 2, infoY + 68);
+
+            // Bottom accent bar
+            ctx.fillStyle = grad;
+            ctx.fillRect(0, h - 3, w, 3);
+
+            // Download
+            canvas.toBlob((blob) => {
+                const a = document.createElement('a');
+                a.href = URL.createObjectURL(blob);
+                a.download = `PharmaChain-QR-${createdBatch.batchNumber}.png`;
+                a.click();
+                URL.revokeObjectURL(a.href);
+            }, 'image/png');
+
+            URL.revokeObjectURL(url);
+        };
+        img.src = url;
+    }
 
     useEffect(() => {
         if (!isAuthenticated) { navigate('/login/manufacturer'); return; }
@@ -158,7 +245,7 @@ export default function Manufacturer() {
                     {createdBatch ? (
                         <div className="qr-result glass-card animate-fade-up">
                             <h3><CheckCircle2 size={16} /> Batch Registered!</h3>
-                            <div className="qr-display">
+                            <div className="qr-display" ref={qrRef}>
                                 <QRCodeSVG
                                     value={JSON.stringify({
                                         batchNumber: createdBatch.batchNumber,
@@ -170,6 +257,9 @@ export default function Manufacturer() {
                                     level="H"
                                 />
                             </div>
+                            <button className="btn btn-download" onClick={downloadQR}>
+                                <Download size={15} /> Download QR Code
+                            </button>
                             <div className="scratch-display">
                                 <label><Key size={14} /> One-Time Scratch Code</label>
                                 <div className="scratch-code">{createdBatch.scratchCode}</div>
