@@ -61,9 +61,11 @@ const fs = require('fs');
 if (fs.existsSync(distPath)) {
     app.use(express.static(distPath));
     // SPA fallback — serve index.html for any non-API route
-    app.get('*', (req, res) => {
+    app.use((req, res, next) => {
         if (!req.path.startsWith('/api') && !req.path.startsWith('/rpc')) {
             res.sendFile(path.join(distPath, 'index.html'));
+        } else {
+            next();
         }
     });
     console.log('📁 Serving frontend from dist/');
