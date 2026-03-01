@@ -2,7 +2,7 @@ import React, { useState, useRef, useEffect, useCallback } from 'react';
 import { Search, Pill, FlaskConical, ArrowRightLeft, X, Sparkles, ChevronRight, AlertTriangle } from 'lucide-react';
 import './MedicineLookup.css';
 
-const API_BASE = import.meta.env.VITE_API_URL || 'http://localhost:3001/api';
+const API_BASE = import.meta.env.VITE_API_URL || (import.meta.env.PROD ? '/api' : 'http://localhost:3001/api');
 const API = `${API_BASE}/medicines`;
 const POPULAR = ['Paracetamol', 'Amoxicillin', 'Metformin', 'Aspirin', 'Ibuprofen', 'Azithromycin', 'Cetirizine', 'Omeprazole', 'Dolo 650', 'Crocin'];
 

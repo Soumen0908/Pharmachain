@@ -55,6 +55,20 @@ app.use((err, req, res, _next) => {
     res.status(500).json({ error: 'Internal server error' });
 });
 
+// ── Serve frontend static files (production) ──
+const distPath = path.join(__dirname, '..', 'dist');
+const fs = require('fs');
+if (fs.existsSync(distPath)) {
+    app.use(express.static(distPath));
+    // SPA fallback — serve index.html for any non-API route
+    app.get('*', (req, res) => {
+        if (!req.path.startsWith('/api') && !req.path.startsWith('/rpc')) {
+            res.sendFile(path.join(distPath, 'index.html'));
+        }
+    });
+    console.log('📁 Serving frontend from dist/');
+}
+
 app.listen(PORT, () => {
     console.log(`✅ PharmaChain API server running on http://localhost:${PORT}`);
 });

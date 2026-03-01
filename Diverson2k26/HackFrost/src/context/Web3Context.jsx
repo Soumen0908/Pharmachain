@@ -15,8 +15,8 @@ const ROLE_NAMES = ['None', 'Manufacturer', 'Distributor', 'Retailer', 'Inspecto
 const HARDHAT_CHAIN_ID = '0x7A69'; // 31337
 const HARDHAT_CHAIN_ID_DEC = 31337;
 
-// RPC URL — in production, points to the backend's /rpc proxy
-const RPC_URL = import.meta.env.VITE_RPC_URL || 'http://127.0.0.1:8545';
+// RPC URL — in production, points to the backend's /rpc proxy (same origin)
+const RPC_URL = import.meta.env.VITE_RPC_URL || (import.meta.env.PROD ? `${window.location.origin}/rpc` : 'http://127.0.0.1:8545');
 
 const HARDHAT_NETWORK = {
     chainId: HARDHAT_CHAIN_ID,
@@ -65,7 +65,7 @@ export function Web3Provider({ children }) {
         async function loadConfig() {
             // 1. Try fetching from backend API (works with live-deployed contract)
             try {
-                const apiBase = import.meta.env.VITE_API_URL || 'http://localhost:3001/api';
+                const apiBase = import.meta.env.VITE_API_URL || (import.meta.env.PROD ? '/api' : 'http://localhost:3001/api');
                 const res = await fetch(`${apiBase}/blockchain/contract-config`);
                 if (res.ok) {
                     const config = await res.json();
