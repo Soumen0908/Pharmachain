@@ -8,7 +8,7 @@
 .sc-header {
     width: 100%;
     padding: 40px 40px 28px;
-    background: linear-gradient(135deg, rgba(90, 138, 170, 0.06), rgba(138, 122, 184, 0.04));
+    background: linear-gradient(135deg, rgba(59, 130, 246, 0.06), rgba(139, 92, 246, 0.04));
     border-bottom: 1px solid var(--border);
 }
 

@@ -810,10 +810,12 @@ router.get('/medicine/:name/batches', async (req, res) => {
                 expiryDate: batch.expiryDate,
                 quantity: batch.quantity,
                 mrp: batch.mrp,
-                status: blockchainData?.status || 'Registered',
+                status: blockchainData?.statusCode ?? 0,
+                statusLabel: blockchainData?.status || 'Manufactured',
                 recalled: blockchainData?.recalled || false,
                 inspectorApproved: blockchainData?.inspectorApproved || false,
                 activated: blockchainData?.activated || false,
+                currentHolder: blockchainData?.currentHolder || '',
                 registeredAt: batch.createdAt,
             });
         }
@@ -1006,19 +1008,40 @@ router.get('/transaction-history', async (req, res) => {
 router.get('/all-batches', async (req, res) => {
     try {
         const allBatches = db.findAll('batch_metadata');
-        const simplified = allBatches.map(b => ({
-            batchNumber: b.batchNumber,
-            medicineName: b.medicineName,
-            composition: b.composition,
-            manufacturer: b.manufacturerName,
-            mfgDate: b.mfgDate,
-            expiryDate: b.expiryDate,
-            quantity: b.quantity,
-            mrp: b.mrp,
-            qrHash: b.qrHash,
-            registeredAt: b.createdAt,
-        }));
-        res.json({ batches: simplified });
+        const contract = blockchain.getContract();
+        const enriched = [];
+
+        for (const batch of allBatches) {
+            let blockchainData = null;
+            try {
+                const details = await contract.getBatchDetails(batch.id);
+                blockchainData = blockchain.formatBatch(details);
+            } catch { /* batch may not exist on chain yet */ }
+
+            enriched.push({
+                batchNumber: batch.batchNumber,
+                medicineName: batch.medicineName,
+                composition: batch.composition,
+                dosageForm: batch.dosageForm,
+                manufacturer: batch.manufacturerName,
+                mfgDate: batch.mfgDate,
+                expiryDate: batch.expiryDate,
+                quantity: batch.quantity,
+                mrp: batch.mrp,
+                qrHash: batch.qrHash,
+                registeredAt: batch.createdAt,
+                // Live blockchain status
+                status: blockchainData?.statusCode ?? 0,
+                statusLabel: blockchainData?.status || 'Manufactured',
+                activated: blockchainData?.activated || false,
+                inspectorApproved: blockchainData?.inspectorApproved || false,
+                recalled: blockchainData?.recalled || false,
+                recallReason: blockchainData?.recallReason || '',
+                currentHolder: blockchainData?.currentHolder || '',
+            });
+        }
+
+        res.json({ batches: enriched });
     } catch (err) {
         res.status(500).json({ error: 'Failed to fetch batches', details: err.message });
     }

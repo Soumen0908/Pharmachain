@@ -1,21 +1,51 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { Link } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import {
     ShieldCheck, ArrowRight, User, Building2,
-    Search, Zap, BarChart3, Heart, Pill, Activity, Truck
+    Search, Zap, BarChart3, Heart, Pill, Activity, Truck,
+    QrCode, LayoutDashboard
 } from 'lucide-react';
 import MedicineLookup from '../components/MedicineLookup';
 import './Landing.css';
 
 export default function Landing() {
-    const { isAuthenticated } = useAuth();
+    const { isAuthenticated, user } = useAuth();
     const [titleVisible, setTitleVisible] = useState(false);
 
     useEffect(() => {
         const timer = setTimeout(() => setTitleVisible(true), 200);
         return () => clearTimeout(timer);
     }, []);
+
+    const userRole = user?.role; // 'manufacturer' | 'customer' | undefined
+
+    // Build quick-access links based on role
+    const quickLinks = useMemo(() => {
+        if (userRole === 'manufacturer') {
+            return [
+                { to: '/manufacturer', label: 'My Dashboard', icon: <LayoutDashboard size={18} /> },
+                { to: '/verify', label: 'Verify Medicine', icon: <ShieldCheck size={18} /> },
+                { to: '/features', label: 'All Features', icon: <Zap size={18} /> },
+                { to: '/analytics', label: 'Analytics', icon: <BarChart3 size={18} /> },
+            ];
+        }
+        if (userRole === 'customer') {
+            return [
+                { to: '/customer-dashboard', label: 'My Dashboard', icon: <LayoutDashboard size={18} /> },
+                { to: '/scan', label: 'Scan QR Code', icon: <QrCode size={18} /> },
+                { to: '/batch-tracker', label: 'Batch Tracker', icon: <Activity size={18} /> },
+                { to: '/analytics', label: 'Analytics', icon: <BarChart3 size={18} /> },
+            ];
+        }
+        // Not logged in
+        return [
+            { to: '/login/customer', label: 'Sign In / Sign Up', icon: <User size={18} /> },
+            { to: '/verify', label: 'Verify Medicine', icon: <ShieldCheck size={18} /> },
+            { to: '/features', label: 'All Features', icon: <Zap size={18} /> },
+            { to: '/analytics', label: 'Analytics', icon: <BarChart3 size={18} /> },
+        ];
+    }, [userRole]);
 
     return (
         <div className="landing">
@@ -27,33 +57,73 @@ export default function Landing() {
                 <div className="hero-grid-bg"></div>
 
                 <div className="hero-content">
-                    <div className="hero-badge animate-fade-in">
-                        <span className="hero-badge-dot"></span>
-                        Built on Ethereum · Powered by AI
+                    {/* Left + Right layout */}
+                    <div className="hero-split">
+                        <div className="hero-left">
+                            <div className="hero-badge animate-fade-in">
+                                <span className="hero-badge-dot"></span>
+                                Built on Ethereum · Blockchain Verified
+                            </div>
+
+                            <h1 className={`hero-title-new ${titleVisible ? 'visible' : ''}`}>
+                                Trust Every Medicine<br />
+                                <span className="hero-gradient-text">You Take.</span>
+                            </h1>
+
+                            <p className="hero-desc animate-fade-up stagger-2">
+                                PharmaChain uses blockchain immutability and multi-source analysis
+                                to verify every medicine — from manufacturing floor to your hands.
+                            </p>
+
+                            <div className="hero-actions animate-fade-up stagger-3">
+                                <Link to="/verify" className="btn btn-primary btn-hero">
+                                    <ShieldCheck size={16} /> Verify a Medicine
+                                </Link>
+                                {userRole !== 'manufacturer' && (
+                                    <Link to={isAuthenticated ? '/scan' : '/login/customer'} className="btn btn-secondary btn-hero">
+                                        <QrCode size={16} /> Scan QR Code
+                                    </Link>
+                                )}
+                            </div>
+
+                            <div className="hero-stats animate-fade-up stagger-4">
+                                <div className="hero-stat">
+                                    <span className="hero-stat-value">On-Chain</span>
+                                    <span className="hero-stat-label">IMMUTABLE RECORDS</span>
+                                </div>
+                                <div className="hero-stat-divider"></div>
+                                <div className="hero-stat">
+                                    <span className="hero-stat-value">Multi-Source</span>
+                                    <span className="hero-stat-label">RISK ANALYSIS</span>
+                                </div>
+                                <div className="hero-stat-divider"></div>
+                                <div className="hero-stat">
+                                    <span className="hero-stat-value">24/7</span>
+                                    <span className="hero-stat-label">VERIFICATION</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div className="hero-right animate-fade-up stagger-3">
+                            <div className="quick-access-panel">
+                                <h3 className="quick-access-title">QUICK ACCESS</h3>
+                                {quickLinks.map((link, i) => (
+                                    <Link key={i} to={link.to} className="quick-access-link">
+                                        <span className="quick-access-icon">{link.icon}</span>
+                                        <span className="quick-access-label">{link.label}</span>
+                                        <ArrowRight size={16} className="quick-access-arrow" />
+                                    </Link>
+                                ))}
+                            </div>
+                        </div>
                     </div>
+                </div>
+            </section>
 
-                    <h1 className={`hero-title-new ${titleVisible ? 'visible' : ''}`}>
-                        Trust Every Medicine<br />
-                        <span className="hero-gradient-text">You Take.</span>
-                    </h1>
-
-                    <p className="hero-desc animate-fade-up stagger-2">
-                        Don't gamble with your health. PharmaChain uses blockchain immutability and AI-driven analysis
-                        to verify every medicine — so you know it's safe before you consume it.
-                    </p>
-
-                    <div className="hero-search-wrapper animate-fade-up stagger-3">
-                        <MedicineLookup />
-                    </div>
-
-                    <div className="hero-actions animate-fade-up stagger-4">
-                        <Link to="/verify" className="btn btn-primary btn-hero">
-                            <ShieldCheck size={18} /> Verify a Medicine
-                        </Link>
-                        <Link to="/scan" className="btn btn-secondary btn-hero">
-                            <Search size={18} /> Scan QR Code
-                        </Link>
-                    </div>
+            {/* ═══ Medicine Lookup ═══ */}
+            <section className="lookup-section">
+                <div className="lookup-wrapper">
+                    <MedicineLookup />
                 </div>
             </section>
 
@@ -66,14 +136,14 @@ export default function Landing() {
                     <div className="role-cards">
                         <Link to="/login/customer" className="role-select-card role-customer">
                             <div className="role-select-icon"><User size={32} /></div>
-                            <h3>I'm a Customer</h3>
-                            <p>Verify medicines, save prescriptions, get expiry alerts, and protect your family</p>
+                            <h3>I'm a Customer / Retailer</h3>
+                            <p>Scan QR codes, view batch history & details, verify medicines, and protect your family</p>
                             <span className="role-select-cta">Create Free Account <ArrowRight size={16} /></span>
                         </Link>
                         <Link to="/login/manufacturer" className="role-select-card role-manufacturer">
                             <div className="role-select-icon"><Building2 size={32} /></div>
                             <h3>I'm a Manufacturer</h3>
-                            <p>Register batches, earn verification badge, build consumer trust with govt ID proof</p>
+                            <p>Register batches, generate QR codes, verify medicines, and build consumer trust</p>
                             <span className="role-select-cta">Get Verified <ArrowRight size={16} /></span>
                         </Link>
                     </div>
@@ -86,7 +156,7 @@ export default function Landing() {
                 <h2 className="section-title">Discover What <span className="gradient-text">PharmaChain Offers</span></h2>
                 <div className="nav-cards-grid">
                     <Link to="/features" className="nav-card">
-                        <div className="nav-card-icon" style={{ background: 'rgba(90, 154, 122, 0.1)', color: '#5a9a7a' }}>
+                        <div className="nav-card-icon" style={{ background: 'rgba(245, 158, 11, 0.1)', color: '#F59E0B' }}>
                             <Zap size={28} />
                         </div>
                         <h3>Features</h3>
@@ -94,7 +164,7 @@ export default function Landing() {
                         <span className="nav-card-cta">View All Features <ArrowRight size={14} /></span>
                     </Link>
                     <Link to="/about" className="nav-card">
-                        <div className="nav-card-icon" style={{ background: 'rgba(90, 138, 170, 0.1)', color: '#5a8aaa' }}>
+                        <div className="nav-card-icon" style={{ background: 'rgba(59, 130, 246, 0.1)', color: '#3B82F6' }}>
                             <Heart size={28} />
                         </div>
                         <h3>About & Trust</h3>
@@ -102,7 +172,7 @@ export default function Landing() {
                         <span className="nav-card-cta">Learn More <ArrowRight size={14} /></span>
                     </Link>
                     <Link to="/analytics" className="nav-card">
-                        <div className="nav-card-icon" style={{ background: 'rgba(138, 122, 184, 0.1)', color: '#8a7ab8' }}>
+                        <div className="nav-card-icon" style={{ background: 'rgba(139, 92, 246, 0.1)', color: '#8B5CF6' }}>
                             <BarChart3 size={28} />
                         </div>
                         <h3>Analytics</h3>
@@ -110,7 +180,7 @@ export default function Landing() {
                         <span className="nav-card-cta">View Analytics <ArrowRight size={14} /></span>
                     </Link>
                     <Link to="/medicine-search" className="nav-card">
-                        <div className="nav-card-icon" style={{ background: 'rgba(90, 170, 138, 0.1)', color: '#4ab88a' }}>
+                        <div className="nav-card-icon" style={{ background: 'rgba(16, 185, 129, 0.1)', color: '#10B981' }}>
                             <Pill size={28} />
                         </div>
                         <h3>Medicine Search</h3>
@@ -118,7 +188,7 @@ export default function Landing() {
                         <span className="nav-card-cta">Search Medicines <ArrowRight size={14} /></span>
                     </Link>
                     <Link to="/batch-tracker" className="nav-card">
-                        <div className="nav-card-icon" style={{ background: 'rgba(184, 138, 90, 0.1)', color: '#b88a4a' }}>
+                        <div className="nav-card-icon" style={{ background: 'rgba(245, 158, 11, 0.1)', color: '#FBBF24' }}>
                             <Activity size={28} />
                         </div>
                         <h3>Batch Tracker</h3>
@@ -126,7 +196,7 @@ export default function Landing() {
                         <span className="nav-card-cta">Track Batches <ArrowRight size={14} /></span>
                     </Link>
                     <Link to="/supply-chain" className="nav-card">
-                        <div className="nav-card-icon" style={{ background: 'rgba(90, 122, 184, 0.1)', color: '#5a7ab8' }}>
+                        <div className="nav-card-icon" style={{ background: 'rgba(59, 130, 246, 0.1)', color: '#60A5FA' }}>
                             <Truck size={28} />
                         </div>
                         <h3>Supply Chain</h3>

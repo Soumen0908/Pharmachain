@@ -7,9 +7,9 @@ import {
 import '../pages/Landing.css';
 
 const STATS = [
-    { icon: <CheckCircle2 size={24} strokeWidth={1.5} />, value: 'Thousands', label: 'of medicines verified daily — keeping families safe', color: '#5a9a7a' },
-    { icon: <ShieldCheck size={24} strokeWidth={1.5} />, value: '98%', label: 'accuracy in detecting counterfeit drugs', color: '#5a8aaa' },
-    { icon: <Factory size={24} strokeWidth={1.5} />, value: '500+', label: 'verified manufacturers trust our platform', color: '#8a7ab8' },
+    { icon: <CheckCircle2 size={24} strokeWidth={1.5} />, value: 'Thousands', label: 'of medicines verified daily — keeping families safe', color: '#F59E0B' },
+    { icon: <ShieldCheck size={24} strokeWidth={1.5} />, value: '98%', label: 'accuracy in detecting counterfeit drugs', color: '#3B82F6' },
+    { icon: <Factory size={24} strokeWidth={1.5} />, value: '500+', label: 'verified manufacturers trust our platform', color: '#8B5CF6' },
     { icon: <Globe size={24} strokeWidth={1.5} />, value: '12 States', label: 'covered with real-time counterfeit monitoring', color: '#c4923a' },
 ];
 
@@ -60,7 +60,7 @@ export default function About() {
                     <h2 className="section-title">How We <span className="gradient-text">Keep You Safe</span></h2>
                     <div className="trust-grid">
                         <div className="trust-item animate-fade-up">
-                            <div className="trust-item-icon" style={{ background: 'rgba(90, 154, 122, 0.1)', color: '#5a9a7a' }}>
+                            <div className="trust-item-icon" style={{ background: 'rgba(245, 158, 11, 0.1)', color: '#F59E0B' }}>
                                 <Lock size={22} />
                             </div>
                             <div>
@@ -69,7 +69,7 @@ export default function About() {
                             </div>
                         </div>
                         <div className="trust-item animate-fade-up" style={{ animationDelay: '0.1s' }}>
-                            <div className="trust-item-icon" style={{ background: 'rgba(90, 138, 170, 0.1)', color: '#5a8aaa' }}>
+                            <div className="trust-item-icon" style={{ background: 'rgba(59, 130, 246, 0.1)', color: '#3B82F6' }}>
                                 <Bot size={22} />
                             </div>
                             <div>
@@ -87,7 +87,7 @@ export default function About() {
                             </div>
                         </div>
                         <div className="trust-item animate-fade-up" style={{ animationDelay: '0.3s' }}>
-                            <div className="trust-item-icon" style={{ background: 'rgba(138, 122, 184, 0.1)', color: '#8a7ab8' }}>
+                            <div className="trust-item-icon" style={{ background: 'rgba(139, 92, 246, 0.1)', color: '#8B5CF6' }}>
                                 <Globe size={22} />
                             </div>
                             <div>

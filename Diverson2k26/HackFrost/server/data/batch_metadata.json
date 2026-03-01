@@ -124,5 +124,26 @@
     "txHash": "0xd4bf9065b69e811f5e9d65230dd00d9f606ebcc82b39d76f87a02f68eb6d935c",
     "blockNumber": 93,
     "createdAt": "2026-02-28T18:58:15.616Z"
+  },
+  {
+    "id": "0x3a6b1af1e896d5fa02b90d003f9475d56db91c0e951e252f3cb4e1e79a8be647",
+    "medicineName": "paracetamol",
+    "batchNumber": "cipla-0856",
+    "composition": "caffine 20",
+    "dosageForm": "Tablet",
+    "mfgDate": "2026-01-18",
+    "expiryDate": "2028-01-08",
+    "quantity": 5000,
+    "mrp": 80,
+    "manufacturerName": "Cipla",
+    "scratchCode": "BB79FC56",
+    "qrHash": "a8f4fb1ca641a1bbbad0cc7556e0dcc362254ae40459f9408d99d6e10c912ff7",
+    "qrPayload": "{\"batchId\":\"0x3a6b1af1e896d5fa02b90d003f9475d56db91c0e951e252f3cb4e1e79a8be647\",\"batchNumber\":\"cipla-0856\",\"qrHash\":\"a8f4fb1ca641a1bbbad0cc7556e0dcc362254ae40459f9408d99d6e10c912ff7\",\"t\":1772348383348}",
+    "qrSalt": "fd07bb04f2260e63",
+    "userId": "14b8aaef-5a3d-4e04-b312-042c68c9eb4c",
+    "manufacturerAddress": "0x70997970C51812dc3A010C7d01b50e0d17dc79C8",
+    "txHash": "0x06cd410ec2cdea6367fa341e1ae31115d7e21595398487759835841aca985ef8",
+    "blockNumber": 129,
+    "createdAt": "2026-03-01T06:59:43.457Z"
   }
 ]

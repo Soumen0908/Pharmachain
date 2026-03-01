@@ -1,31 +1,31 @@
 /* ═══ Manufacturer Auth Theme Overrides ═══ */
 .manufacturer-auth .auth-orb-1 {
-    background: #5a8aaa;
+    background: #3B82F6;
 }
 
 .manufacturer-auth .auth-orb-2 {
-    background: #8a7ab8;
+    background: #8B5CF6;
 }
 
 .mfr-badge {
-    background: rgba(90, 138, 170, 0.1) !important;
-    border-color: rgba(90, 138, 170, 0.2) !important;
-    color: #5a8aaa !important;
+    background: rgba(59, 130, 246, 0.1) !important;
+    border-color: rgba(59, 130, 246, 0.2) !important;
+    color: #3B82F6 !important;
 }
 
 .manufacturer-auth .auth-tab.active {
-    background: #5a8aaa;
-    box-shadow: 0 2px 12px rgba(90, 138, 170, 0.3);
+    background: #3B82F6;
+    box-shadow: 0 2px 12px rgba(59, 130, 246, 0.3);
 }
 
 .manufacturer-auth .auth-field input:focus,
 .manufacturer-auth .auth-field select:focus {
-    border-color: #5a8aaa;
-    box-shadow: 0 0 0 3px rgba(90, 138, 170, 0.1);
+    border-color: #3B82F6;
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
 }
 
 .btn-blue {
-    background: linear-gradient(135deg, #5a8aaa, #8a7ab8);
+    background: linear-gradient(135deg, #3B82F6, #8B5CF6);
     color: white;
     border: none;
     border-radius: 12px;
@@ -35,7 +35,7 @@
 
 .btn-blue:hover {
     transform: translateY(-1px);
-    box-shadow: 0 6px 20px rgba(90, 138, 170, 0.3);
+    box-shadow: 0 6px 20px rgba(59, 130, 246, 0.3);
 }
 
 .btn-blue:disabled {
@@ -45,7 +45,7 @@
 }
 
 .gradient-text-blue {
-    background: linear-gradient(135deg, #5a8aaa, #8a7ab8);
+    background: linear-gradient(135deg, #3B82F6, #8B5CF6);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;

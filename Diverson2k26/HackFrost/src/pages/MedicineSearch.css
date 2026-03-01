@@ -9,7 +9,7 @@
 .ms-hero {
     width: 100%;
     padding: 60px 40px 40px;
-    background: linear-gradient(135deg, rgba(90, 154, 122, 0.08), rgba(138, 122, 184, 0.06));
+    background: linear-gradient(135deg, rgba(245, 158, 11, 0.08), rgba(139, 92, 246, 0.06));
     border-bottom: 1px solid var(--border);
 }
 

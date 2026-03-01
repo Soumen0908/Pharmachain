@@ -246,7 +246,7 @@
 
 .leaderboard-you {
     border: 1px solid var(--border-glow);
-    box-shadow: 0 0 8px rgba(6, 182, 212, 0.05);
+    box-shadow: 0 0 8px rgba(245, 158, 11, 0.05);
 }
 
 .activity-list {

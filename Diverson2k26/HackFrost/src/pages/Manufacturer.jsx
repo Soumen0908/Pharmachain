@@ -147,7 +147,7 @@ export default function Manufacturer() {
 
                         {error && <div className="form-error"><AlertTriangle size={13} /> {error}</div>}
 
-                        <button type="submit" className="btn btn-primary btn-lg" disabled={loading} style={{ width: '100%', marginTop: '16px' }}>
+                        <button type="submit" className="btn btn-primary btn-lg" disabled={loading} style={{ width: '100%' }}>
                             {loading ? <><Clock size={16} /> Registering on Blockchain...</> : <><PlusCircle size={16} /> Register Batch</>}
                         </button>
                     </form>

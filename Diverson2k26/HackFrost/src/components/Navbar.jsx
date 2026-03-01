@@ -25,32 +25,45 @@ export default function Navbar() {
     const navLinks = useMemo(() => {
         const links = [
             { to: '/home', label: 'Home', icon: <Home size={15} /> },
-            { to: '/features', label: 'Features', icon: <Zap size={15} /> },
-            { to: '/about', label: 'About', icon: <Heart size={15} /> },
-            { to: '/verify', label: 'Verify', icon: <ShieldCheck size={15} /> },
-            { to: '/scan', label: 'Scan', icon: <QrCode size={15} /> },
-            { to: '/medicine-search', label: 'Search', icon: <Search size={15} /> },
-            { to: '/batch-tracker', label: 'Tracker', icon: <Activity size={15} /> },
-            { to: '/supply-chain', label: 'Supply Chain', icon: <Truck size={15} /> },
-            { to: '/transactions', label: 'Transactions', icon: <History size={15} /> },
         ];
 
-        // Auth-based links for logged-in users
+        // Role-based links
+        if (isAuthenticated && user) {
+            if (user.role === 'manufacturer') {
+                // Manufacturer: Verify + Generate QR (Create) + Transfer
+                links.push({ to: '/verify', label: 'Verify', icon: <ShieldCheck size={15} /> });
+                links.push({ to: '/manufacturer', label: 'Create QR', icon: <PlusCircle size={15} /> });
+                links.push({ to: '/transfer', label: 'Transfer', icon: <ArrowLeftRight size={15} /> });
+            } else {
+                // Customer/Retailer: Scan + Batch history + details
+                links.push({ to: '/scan', label: 'Scan', icon: <QrCode size={15} /> });
+                links.push({ to: '/batch-tracker', label: 'Batch History', icon: <Activity size={15} /> });
+                links.push({ to: '/supply-chain', label: 'Supply Chain', icon: <Truck size={15} /> });
+                links.push({ to: '/verify', label: 'Verify', icon: <ShieldCheck size={15} /> });
+            }
+        } else {
+            // Not logged in — Scan redirects to login, Verify is public
+            links.push({ to: '/verify', label: 'Verify', icon: <ShieldCheck size={15} /> });
+            links.push({ to: '/login/customer', label: 'Scan', icon: <QrCode size={15} /> });
+        }
+
+        // Common links for everyone
+        links.push({ to: '/features', label: 'Features', icon: <Zap size={15} /> });
+        links.push({ to: '/about', label: 'About', icon: <Heart size={15} /> });
+        links.push({ to: '/medicine-search', label: 'Search', icon: <Search size={15} /> });
+        links.push({ to: '/transactions', label: 'Transactions', icon: <History size={15} /> });
+
+        // Dashboard links based on role
         if (isAuthenticated && user) {
             if (user.role === 'customer') {
                 links.push({ to: '/customer-dashboard', label: 'My Dashboard', icon: <LayoutDashboard size={15} /> });
             }
-            if (user.role === 'manufacturer') {
-                links.push({ to: '/manufacturer', label: 'Create', icon: <PlusCircle size={15} /> });
-                links.push({ to: '/transfer', label: 'Transfer', icon: <ArrowLeftRight size={15} /> });
-            }
             links.push({ to: '/rewards', label: 'Rewards', icon: <Trophy size={15} /> });
         }
 
-        // Web3-connected links (blockchain admin pages)
+        // Web3-connected blockchain admin links
         if (isConnected) {
             if (!isAuthenticated) {
-                // Only add if not already added by auth
                 links.push({ to: '/rewards', label: 'Rewards', icon: <Trophy size={15} /> });
             }
             links.push({ to: '/dashboard', label: 'Dashboard', icon: <LayoutDashboard size={15} /> });

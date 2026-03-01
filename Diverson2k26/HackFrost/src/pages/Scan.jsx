@@ -41,6 +41,25 @@ export default function Scan() {
     const [showSuccessPopup, setShowSuccessPopup] = useState(false);
     const [successData, setSuccessData] = useState(null);
 
+    // Known batch lookup for auto-fill (demo batches)
+    const KNOWN_BATCHES = {
+        'PCM-2026-001': 'XKRF82NP',
+        'AMX-2026-002': 'M3QW9TYA',
+        'MET-2026-003': 'J7LP4XCR',
+        'COV-2026-004': 'VX92KFBN',
+        'IBU-2026-005': 'QZ5D8MVH',
+        'AZI-2026-006': 'PL8N2RAT',
+    };
+
+    // Auto-fill scratch code when a known batch ID is entered
+    function handleBatchIdChange(value) {
+        setBatchForActivation(value);
+        const upper = value.trim().toUpperCase();
+        if (KNOWN_BATCHES[upper]) {
+            setScratchInput(KNOWN_BATCHES[upper]);
+        }
+    }
+
     function resetActivationForm() {
         setScratchInput('');
         setBatchForActivation('');
@@ -68,9 +87,14 @@ export default function Scan() {
                     // Parse QR JSON: { batchNumber, scratchCode }
                     try {
                         const data = JSON.parse(decodedText.trim());
-                        if (data.scratchCode) setScratchInput(data.scratchCode);
-                        if (data.batchNumber) setBatchForActivation(data.batchNumber);
-                        // Scroll to activation section
+                        const batchId = data.batchNumber || '';
+                        let code = data.scratchCode || '';
+                        // Auto-fill from known batches if QR scratch code is empty
+                        if (!code && batchId && KNOWN_BATCHES[batchId.toUpperCase()]) {
+                            code = KNOWN_BATCHES[batchId.toUpperCase()];
+                        }
+                        if (batchId) setBatchForActivation(batchId);
+                        if (code) setScratchInput(code);
                         setTimeout(() => document.querySelector('.activation-section')?.scrollIntoView({ behavior: 'smooth' }), 200);
                     } catch {
                         // Fallback: treat entire text as scratch code
@@ -157,14 +181,19 @@ export default function Scan() {
             scanner.clear();
 
             // Parse QR JSON: { batchNumber, scratchCode }
-            let scratchCode = decodedText.trim();
+            let scratchCode = '';
             let batchNumber = '';
             try {
                 const data = JSON.parse(decodedText.trim());
-                if (data.scratchCode) scratchCode = data.scratchCode;
-                if (data.batchNumber) batchNumber = data.batchNumber;
+                batchNumber = data.batchNumber || '';
+                scratchCode = data.scratchCode || '';
+                // Auto-fill from known batches if QR scratch code is empty
+                if (!scratchCode && batchNumber && KNOWN_BATCHES[batchNumber.toUpperCase()]) {
+                    scratchCode = KNOWN_BATCHES[batchNumber.toUpperCase()];
+                }
             } catch {
                 // Fallback: treat entire text as scratch code
+                scratchCode = decodedText.trim();
             }
             setUploadResult({ success: true, scratchCode, batchNumber, raw: decodedText });
         } catch (err) {
@@ -408,8 +437,10 @@ export default function Scan() {
                                 <p>Scratch Code: <code>{uploadResult.scratchCode}</code></p>
                             </div>
                             <button className="btn btn-primary btn-sm" onClick={() => {
-                                setScratchInput(uploadResult.scratchCode);
-                                if (uploadResult.batchNumber) setBatchForActivation(uploadResult.batchNumber);
+                                const code = uploadResult.scratchCode || '';
+                                const batch = uploadResult.batchNumber || '';
+                                if (batch) handleBatchIdChange(batch);
+                                if (code) setScratchInput(code);
                                 document.querySelector('.activation-section')?.scrollIntoView({ behavior: 'smooth' });
                             }}>
                                 Use for Activation →
@@ -454,7 +485,7 @@ export default function Scan() {
                                 className="input-field"
                                 placeholder="Batch ID (e.g. PCM-2026-001)"
                                 value={batchForActivation}
-                                onChange={e => setBatchForActivation(e.target.value)}
+                                onChange={e => handleBatchIdChange(e.target.value)}
                                 disabled={activationLoading}
                             />
                             <input

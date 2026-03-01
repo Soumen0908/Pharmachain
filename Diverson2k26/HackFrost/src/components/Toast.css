@@ -50,7 +50,7 @@
 
 .toast-success .toast-icon {
     background: rgba(0, 212, 170, 0.15);
-    color: #5a9a7a;
+    color: #10B981;
 }
 
 .toast-error .toast-icon {
@@ -65,7 +65,7 @@
 
 .toast-info .toast-icon {
     background: rgba(54, 162, 235, 0.15);
-    color: #5a8aaa;
+    color: #3B82F6;
 }
 
 .toast-message {
@@ -90,7 +90,7 @@
 }
 
 .toast-success {
-    border-left: 3px solid #5a9a7a;
+    border-left: 3px solid #10B981;
 }
 
 .toast-error {

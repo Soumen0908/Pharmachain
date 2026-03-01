@@ -216,7 +216,7 @@ export default function CustomerDashboard() {
                                             <span className="cd-batch-mfr"><Factory size={13} /> {b.manufacturer}</span>
                                         </div>
                                         <span className={`cd-batch-status ${b.recalled ? 'recalled' : b.inspectorApproved ? 'approved' : 'active'}`}>
-                                            {b.recalled ? 'RECALLED' : b.inspectorApproved ? 'APPROVED' : b.status || 'Registered'}
+                                            {b.recalled ? 'RECALLED' : b.inspectorApproved ? 'APPROVED' : b.statusLabel || 'Manufactured'}
                                         </span>
                                     </div>
                                     <div className="cd-batch-info">

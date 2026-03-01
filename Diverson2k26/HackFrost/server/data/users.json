@@ -148,5 +148,30 @@
     },
     "createdAt": "2026-02-28T06:17:26.043Z",
     "updatedAt": "2026-02-28T06:17:26.043Z"
+  },
+  {
+    "id": "14b8aaef-5a3d-4e04-b312-042c68c9eb4c",
+    "email": "sohamkundu748@gmail.com",
+    "password": "Souma@25",
+    "name": "Soumen Hati",
+    "phone": "",
+    "role": "manufacturer",
+    "address": "",
+    "avatar": "",
+    "emailVerified": true,
+    "companyName": "Cipla",
+    "licenseNumber": "fwfwfwf",
+    "govtIdProof": "",
+    "govtIdVerified": false,
+    "savedMedicines": [],
+    "searchHistory": [],
+    "expiryAlerts": [],
+    "preferences": {
+      "notifications": true,
+      "darkMode": true,
+      "language": "en"
+    },
+    "createdAt": "2026-03-01T06:54:03.953Z",
+    "updatedAt": "2026-03-01T06:54:03.953Z"
   }
 ]

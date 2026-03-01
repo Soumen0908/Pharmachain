@@ -1,18 +1,29 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import './Intro.css';
 
+const WORDS = ['Verified', 'Traceable', 'Immutable', 'Trusted'];
+
 export default function Intro() {
     const navigate = useNavigate();
-    const [phase, setPhase] = useState(0); // 0=logo, 1=tagline, 2=stats, 3=cta
+    const [phase, setPhase] = useState(0);
+    const [wordIdx, setWordIdx] = useState(0);
+    const progressRef = useRef(null);
 
     useEffect(() => {
         const timers = [
-            setTimeout(() => setPhase(1), 800),
-            setTimeout(() => setPhase(2), 2000),
-            setTimeout(() => setPhase(3), 3200),
+            setTimeout(() => setPhase(1), 600),
+            setTimeout(() => setPhase(2), 1600),
+            setTimeout(() => setPhase(3), 2600),
         ];
         return () => timers.forEach(clearTimeout);
+    }, []);
+
+    useEffect(() => {
+        const interval = setInterval(() => {
+            setWordIdx(prev => (prev + 1) % WORDS.length);
+        }, 2200);
+        return () => clearInterval(interval);
     }, []);
 
     function enterApp() {
@@ -23,90 +34,77 @@ export default function Intro() {
 
     return (
         <div className="intro-page">
-            {/* Ambient background */}
+            {/* Cinematic background overlay */}
             <div className="intro-bg">
-                <div className="intro-orb intro-orb-1"></div>
-                <div className="intro-orb intro-orb-2"></div>
-                <div className="intro-orb intro-orb-3"></div>
-                <div className="intro-grid"></div>
+                <div className="intro-noise"></div>
+                <div className="intro-vignette"></div>
+                <div className="intro-gradient-sweep"></div>
             </div>
 
-            {/* Floating particles */}
-            <div className="intro-particles">
-                {[...Array(20)].map((_, i) => (
-                    <div key={i} className="intro-particle" style={{
-                        left: `${Math.random() * 100}%`,
-                        top: `${Math.random() * 100}%`,
-                        animationDelay: `${Math.random() * 5}s`,
-                        animationDuration: `${4 + Math.random() * 6}s`,
-                        width: `${2 + Math.random() * 4}px`,
-                        height: `${2 + Math.random() * 4}px`,
-                    }}></div>
-                ))}
-            </div>
+            {/* Thin scan line */}
+            <div className="intro-scanline"></div>
 
             <div className="intro-content">
-                {/* Phase 0: Logo */}
-                <div className={`intro-logo-block ${phase >= 0 ? 'visible' : ''}`}>
-                    <div className="intro-logo">
-                        <svg width="72" height="72" viewBox="0 0 72 72" fill="none" xmlns="http://www.w3.org/2000/svg">
-                            <rect width="72" height="72" rx="18" fill="url(#logoGrad)" />
-                            <path d="M36 16L24 28v12l12 12 12-12V28L36 16z" fill="white" opacity="0.9" />
-                            <circle cx="36" cy="34" r="6" fill="white" />
-                            <path d="M36 40v8" stroke="white" strokeWidth="2.5" strokeLinecap="round" />
-                            <path d="M30 44h12" stroke="white" strokeWidth="2.5" strokeLinecap="round" />
-                            <defs>
-                                <linearGradient id="logoGrad" x1="0" y1="0" x2="72" y2="72" gradientUnits="userSpaceOnUse">
-                                    <stop stopColor="#5a9a7a" />
-                                    <stop offset="1" stopColor="#4a8a9a" />
-                                </linearGradient>
-                            </defs>
-                        </svg>
-                    </div>
-                    <h1 className="intro-brand">PharmaChain</h1>
-                    <div className="intro-tagline-badge">Anti-Counterfeit Drug Infrastructure</div>
+                {/* Top bar */}
+                <div className={`intro-topbar ${phase >= 0 ? 'visible' : ''}`}>
+                    <span className="intro-label">PHARMACHAIN</span>
+                    <span className="intro-label-dot"></span>
+                    <span className="intro-label-sub">Anti-Counterfeit Infrastructure</span>
                 </div>
 
-                {/* Phase 1: Mission Statement */}
-                <div className={`intro-mission ${phase >= 1 ? 'visible' : ''}`}>
-                    <p className="intro-mission-text">
-                        <span className="intro-highlight">1 million lives</span> are lost every year to counterfeit medicines.
-                        <br />We're building the technology to make that number <span className="intro-highlight">zero</span>.
-                    </p>
+                {/* Hero headline */}
+                <div className={`intro-headline ${phase >= 1 ? 'visible' : ''}`}>
+                    <h1>
+                        Every medicine<br />
+                        should be{' '}
+                        <span className="intro-rotating-word" key={wordIdx}>
+                            {WORDS[wordIdx]}
+                        </span>
+                    </h1>
                 </div>
 
-                {/* Phase 2: Key pillars */}
-                <div className={`intro-pillars ${phase >= 2 ? 'visible' : ''}`}>
-                    <div className="intro-pillar">
-                        <div className="intro-pillar-icon">⛓️</div>
-                        <span>Blockchain Verified</span>
+                {/* Stats row */}
+                <div className={`intro-stats ${phase >= 2 ? 'visible' : ''}`}>
+                    <div className="intro-stat">
+                        <span className="intro-stat-num">1M+</span>
+                        <span className="intro-stat-label">Lives lost yearly to counterfeits</span>
                     </div>
-                    <div className="intro-pillar-divider"></div>
-                    <div className="intro-pillar">
-                        <div className="intro-pillar-icon">🤖</div>
-                        <span>AI-Powered Detection</span>
+                    <div className="intro-stat-sep"></div>
+                    <div className="intro-stat">
+                        <span className="intro-stat-num">$200B</span>
+                        <span className="intro-stat-label">Global counterfeit drug market</span>
                     </div>
-                    <div className="intro-pillar-divider"></div>
-                    <div className="intro-pillar">
-                        <div className="intro-pillar-icon">🔬</div>
-                        <span>End-to-End Traceability</span>
+                    <div className="intro-stat-sep"></div>
+                    <div className="intro-stat">
+                        <span className="intro-stat-num">30%</span>
+                        <span className="intro-stat-label">Of drugs in developing nations are fake</span>
                     </div>
                 </div>
 
-                {/* Phase 3: CTA */}
+                {/* CTA */}
                 <div className={`intro-cta ${phase >= 3 ? 'visible' : ''}`}>
                     <button className="intro-enter-btn" onClick={enterApp}>
-                        Enter PharmaChain
-                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                        <span>Enter Platform</span>
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                             <path d="M5 12h14M12 5l7 7-7 7" />
                         </svg>
                     </button>
-                    <p className="intro-skip">Built on Ethereum · Powered by AI · Made in India 🇮🇳</p>
+                </div>
+
+                {/* Footer line */}
+                <div className={`intro-footer ${phase >= 3 ? 'visible' : ''}`}>
+                    <span>Blockchain</span>
+                    <span className="intro-footer-dot">·</span>
+                    <span>AI Detection</span>
+                    <span className="intro-footer-dot">·</span>
+                    <span>Supply Chain</span>
                 </div>
             </div>
 
-            {/* Bottom gradient line */}
-            <div className="intro-bottom-line"></div>
+            {/* Progress bar */}
+            <div className="intro-progress" ref={progressRef}>
+                <div className="intro-progress-fill"></div>
+            </div>
         </div>
     );
 }

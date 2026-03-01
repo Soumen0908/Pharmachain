@@ -103,12 +103,12 @@
 
 .nav-link:hover {
     color: var(--text-primary);
-    background: rgba(6, 182, 212, 0.05);
+    background: rgba(245, 158, 11, 0.06);
 }
 
 .nav-link.active {
     color: var(--brand-light);
-    background: rgba(6, 182, 212, 0.1);
+    background: rgba(245, 158, 11, 0.1);
 }
 
 .nav-link.active::after {
@@ -270,13 +270,13 @@
 }
 
 .role-mfr {
-    background: rgba(90, 138, 170, 0.15);
-    color: #5a8aaa;
+    background: rgba(59, 130, 246, 0.15);
+    color: #60A5FA;
 }
 
 .role-cust {
-    background: rgba(90, 154, 122, 0.15);
-    color: #5a9a7a;
+    background: rgba(245, 158, 11, 0.15);
+    color: #FBBF24;
 }
 
 .navbar-login-btn {

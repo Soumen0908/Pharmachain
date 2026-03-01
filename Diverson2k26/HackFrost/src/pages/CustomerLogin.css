@@ -40,11 +40,11 @@
 }
 
 .customer-auth .auth-orb-1 {
-    background: #5a9a7a;
+    background: #F59E0B;
 }
 
 .customer-auth .auth-orb-2 {
-    background: #5a8aaa;
+    background: #3B82F6;
 }
 
 .auth-page-content {
@@ -68,8 +68,8 @@
     align-items: center;
     gap: 8px;
     padding: 8px 16px;
-    background: rgba(90, 154, 122, 0.1);
-    border: 1px solid rgba(90, 154, 122, 0.2);
+    background: rgba(245, 158, 11, 0.1);
+    border: 1px solid rgba(245, 158, 11, 0.2);
     border-radius: 100px;
     font-size: 0.82rem;
     font-weight: 600;
@@ -120,8 +120,8 @@
 }
 
 .trust-dot-green {
-    background: #5a9a7a;
-    box-shadow: 0 0 8px rgba(90, 154, 122, 0.5);
+    background: #F59E0B;
+    box-shadow: 0 0 8px rgba(245, 158, 11, 0.5);
 }
 
 /* Form Side */
@@ -185,7 +185,7 @@
 .auth-tab.active {
     background: var(--brand);
     color: white;
-    box-shadow: 0 2px 12px rgba(90, 154, 122, 0.3);
+    box-shadow: 0 2px 12px rgba(245, 158, 11, 0.3);
 }
 
 .auth-error {
@@ -233,7 +233,7 @@
 .auth-field select:focus,
 .auth-field textarea:focus {
     border-color: var(--brand);
-    box-shadow: 0 0 0 3px rgba(90, 154, 122, 0.1);
+    box-shadow: 0 0 0 3px rgba(245, 158, 11, 0.1);
 }
 
 .auth-field input::placeholder {
@@ -347,7 +347,7 @@
 
 .auth-file-label:hover {
     border-color: var(--brand);
-    background: rgba(90, 154, 122, 0.05);
+    background: rgba(245, 158, 11, 0.05);
 }
 
 .auth-file-label.has-file {
@@ -375,8 +375,8 @@
 }
 
 .govt-id-status.verified {
-    background: rgba(90, 154, 122, 0.1);
-    color: #5a9a7a;
+    background: rgba(245, 158, 11, 0.1);
+    color: #F59E0B;
 }
 
 .govt-id-status.pending {

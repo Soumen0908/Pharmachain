@@ -52,7 +52,11 @@ function AppLayout() {
                     <Route path="/about" element={<About />} />
                     <Route path="/verify" element={<Verify />} />
                     <Route path="/verify/:batchId" element={<Verify />} />
-                    <Route path="/scan" element={<Scan />} />
+                    <Route path="/scan" element={
+                        <ProtectedRoute allowedRoles={['customer']} redirectTo="/login/customer">
+                            <Scan />
+                        </ProtectedRoute>
+                    } />
                     <Route path="/medicine-search" element={<MedicineSearch />} />
                     <Route path="/batch-tracker" element={<BatchTracker />} />
                     <Route path="/supply-chain" element={<SupplyChain />} />
