@@ -10,7 +10,7 @@ import { recordScan, getScanHistory, getBatchMetadata, getAllMetadata } from '..
 import { calculateReward } from '../services/rewardEngine';
 import { addRewardPoints, getRewards } from '../services/offChainStore';
 import { saveMedicine, getBatchReports, verifyBatch as serverVerifyBatch, verifyScratchCode, getBatchDetails as serverGetBatchDetails } from '../services/api';
-import { ShieldCheck, ShieldAlert, ShieldX, Search, ClipboardList, MapPin, Factory, User, ScanLine, Lock, Unlock, AlertTriangle, CheckCircle2, Clock, Eye, Bot, Flag, Bookmark, Info, Hash, RefreshCw, QrCode, Download } from 'lucide-react';
+import { ShieldCheck, ShieldAlert, ShieldX, Search, ClipboardList, MapPin, Factory, User, ScanLine, Lock, Unlock, AlertTriangle, CheckCircle2, Clock, Eye, Bot, Flag, Bookmark, Info, Hash, RefreshCw, QrCode, Download, Package, FlaskConical } from 'lucide-react';
 import RadarChart from '../components/RadarChart';
 import ScratchCard from '../components/ScratchCard';
 import VerificationCertificate from '../components/VerificationCertificate';
@@ -109,11 +109,13 @@ export default function Verify() {
                     setBatchData(batch);
                     setHistory(historyData);
                     setTrustResult(trust);
-                    // Generate verification QR after successful verify
+                    // Generate verification QR with batch + scratch code
                     const batchNum = result.medicine?.batchNumber || batchId;
+                    const scratchMeta = result.medicine?.scratchCode || '';
                     setVerifyQR({
-                        url: `${window.location.origin}/verify/${encodeURIComponent(batchNum)}`,
+                        qrData: JSON.stringify({ batchNumber: batchNum, scratchCode: scratchMeta }),
                         batchNumber: batchNum,
+                        scratchCode: scratchMeta,
                         drugName: result.medicine?.drugName || result.medicine?.medicineName || 'Unknown',
                         verifiedAt: new Date().toISOString(),
                         trustScore: trust.score,
@@ -180,6 +182,7 @@ export default function Verify() {
                             dosageForm: med.dosageForm,
                             manufacturerName: med.manufacturer,
                             manufacturingLocation: med.location || null,
+                            scratchCode: med.scratchCode || '',
                             batchIdHash: batchHash,
                         };
                     }
@@ -198,11 +201,13 @@ export default function Verify() {
             setBatchData(batch);
             setHistory(historyData);
             setTrustResult(trust);
-            // Generate verification QR after successful verify
+            // Generate verification QR with batch + scratch code
             const batchNum = batch.meta?.batchNumber || batchId;
+            const scratchMeta = batch.meta?.scratchCode || '';
             setVerifyQR({
-                url: `${window.location.origin}/verify/${encodeURIComponent(batchNum)}`,
+                qrData: JSON.stringify({ batchNumber: batchNum, scratchCode: scratchMeta }),
                 batchNumber: batchNum,
+                scratchCode: scratchMeta,
                 drugName: batch.meta?.drugName || batch.meta?.medicineName || 'Unknown',
                 verifiedAt: new Date().toISOString(),
                 trustScore: trust.score,
@@ -238,6 +243,7 @@ export default function Verify() {
                             composition: result.medicine.composition,
                             dosageForm: result.medicine.dosageForm,
                             manufacturerName: result.medicine.manufacturer,
+                            scratchCode: result.medicine.scratchCode || '',
                         } : null,
                     };
                     const historyData = (result.supplyChain || []).map(r => ({
@@ -253,9 +259,11 @@ export default function Verify() {
                     setHistory(historyData);
                     setTrustResult(trust);
                     const batchNum = batch.meta?.batchNumber || batchId;
+                    const scratchMeta = batch.meta?.scratchCode || '';
                     setVerifyQR({
-                        url: `${window.location.origin}/verify/${encodeURIComponent(batchNum)}`,
+                        qrData: JSON.stringify({ batchNumber: batchNum, scratchCode: scratchMeta }),
                         batchNumber: batchNum,
+                        scratchCode: scratchMeta,
                         drugName: batch.meta?.drugName || batch.meta?.medicineName || 'Unknown',
                         verifiedAt: new Date().toISOString(),
                         trustScore: trust.score,
@@ -415,7 +423,19 @@ export default function Verify() {
             {error && <div style={{ marginTop: '12px', padding: '10px 14px', background: 'var(--danger-bg)', color: 'var(--danger)', borderRadius: 'var(--radius-lg)', fontSize: '0.85rem', border: '1px solid rgba(239,68,68,0.2)', display: 'flex', alignItems: 'center', gap: '8px' }}><AlertTriangle size={14} /> {error}</div>}
 
             {batchData && (
-                <div className="verify-results animate-fade-up" style={{ animationDelay: '0.1s' }}>
+                <>
+                {/* ═══════════════════════════════════════════ */}
+                {/* SECTION 1: MANUFACTURER VERIFICATION       */}
+                {/* ═══════════════════════════════════════════ */}
+                <div className="verify-section-divider animate-fade-up" style={{ animationDelay: '0.1s' }}>
+                    <div className="section-divider-icon"><Factory size={20} /></div>
+                    <div>
+                        <h2 className="section-divider-title">Manufacturer Verification</h2>
+                        <p className="section-divider-desc">Batch origin, product details, and supply chain journey from the manufacturer</p>
+                    </div>
+                </div>
+
+                <div className="verify-results animate-fade-up" style={{ animationDelay: '0.15s' }}>
                     {/* Main Column */}
                     <div className="verify-main">
                         {/* Verdict */}
@@ -471,39 +491,6 @@ export default function Verify() {
                                     </div>
                                 )}
                             </div>
-
-                            {/* Scratch Code Activation */}
-                            <div style={{ marginTop: '20px', paddingTop: '16px', borderTop: '1px solid var(--border)' }}>
-                                <h3 style={{ marginBottom: '12px' }}><Lock size={16} /> Physical Authentication</h3>
-                                {batchData.activated ? (
-                                    <div className="activation-info">
-                                        <AlertTriangle size={14} /> Product already activated by {truncateAddress(batchData.activatedBy)}
-                                        {batchData.activatedBy.toLowerCase() !== account?.toLowerCase() && (
-                                            <div className="activation-warning">
-                                                <ShieldAlert size={14} /> WARNING: This product was activated by a different address. This may indicate a <strong>counterfeit</strong>.
-                                            </div>
-                                        )}
-                                    </div>
-                                ) : (
-                                    <div className="activation-form">
-                                        <input className="input-field" placeholder="Enter scratch code from packaging"
-                                            value={scratchInput} onChange={e => setScratchInput(e.target.value.toUpperCase())}
-                                            style={{ fontFamily: 'var(--font-mono)', letterSpacing: '0.15em' }} />
-                                        <button className="btn btn-primary btn-sm" onClick={handleActivate} disabled={loading}>
-                                            {loading ? <Clock size={14} /> : <><Unlock size={14} /> Activate</>}
-                                        </button>
-                                    </div>
-                                )}
-                            </div>
-
-                            {/* Scratch Card Result */}
-                            {activationResult && (
-                                <ScratchCard
-                                    isFirstActivation={activationResult.firstActivation}
-                                    reward={activationResult.reward}
-                                    onComplete={() => { }}
-                                />
-                            )}
                         </div>
 
                         {/* Chain of Custody */}
@@ -535,7 +522,147 @@ export default function Verify() {
                         </div>
                     </div>
 
-                    {/* Sidebar */}
+                    {/* Sidebar — Transparency & QR */}
+                    <div className="verify-sidebar">
+                        {/* Transparency Panel */}
+                        <div className="trust-card">
+                            <h3><Eye size={16} /> Transparency</h3>
+                            <div style={{ display: 'flex', flexDirection: 'column', gap: '10px', fontSize: '0.82rem' }}>
+                                <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                                    <span style={{ color: 'var(--text-secondary)' }}><Hash size={12} /> Blockchain Hash</span>
+                                    <span className="mono" style={{ fontSize: '0.72rem', color: 'var(--text-muted)' }}>{batchData.batchIdHash.slice(0, 12)}...</span>
+                                </div>
+                                <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                                    <span style={{ color: 'var(--text-secondary)' }}><RefreshCw size={12} /> Last Updated</span>
+                                    <span>{batchData.updatedAt ? new Date(batchData.updatedAt * 1000).toLocaleString() : 'N/A'}</span>
+                                </div>
+                                <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                                    <span style={{ color: 'var(--text-secondary)' }}><Clock size={12} /> Created</span>
+                                    <span>{new Date(batchData.createdAt * 1000).toLocaleString()}</span>
+                                </div>
+                                <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                                    <span style={{ color: 'var(--text-secondary)' }}><Eye size={12} /> Data Sources</span>
+                                    <span>Blockchain + AI + Inspector</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        {/* Verification QR Code */}
+                        {verifyQR && (
+                            <div className="trust-card verify-qr-card">
+                                <h3><QrCode size={16} /> Verification QR Code</h3>
+                                <p style={{ fontSize: '0.78rem', color: 'var(--text-secondary)', marginBottom: '14px', lineHeight: 1.5 }}>
+                                    Unique QR generated for this batch. Anyone can scan it to instantly verify authenticity.
+                                </p>
+                                <div className="verify-qr-wrapper">
+                                    <QRCodeCanvas
+                                        id="verify-qr-canvas"
+                                        value={verifyQR.qrData}
+                                        size={180}
+                                        level="H"
+                                        includeMargin={true}
+                                        imageSettings={{
+                                            src: '/images/favicon.ico',
+                                            height: 28,
+                                            width: 28,
+                                            excavate: true,
+                                        }}
+                                        style={{ borderRadius: '10px', display: 'block', margin: '0 auto' }}
+                                    />
+                                </div>
+                                <div className="verify-qr-meta">
+                                    <div className="verify-qr-row"><span>Batch</span><strong>{verifyQR.batchNumber}</strong></div>
+                                    <div className="verify-qr-row"><span>Drug</span><strong>{verifyQR.drugName}</strong></div>
+                                    <div className="verify-qr-row"><span>Scratch Code</span><strong style={{ fontFamily: 'var(--font-mono)', letterSpacing: '0.1em' }}>{verifyQR.scratchCode || '—'}</strong></div>
+                                    <div className="verify-qr-row">
+                                        <span>Trust Score</span>
+                                        <strong style={{ color: verifyQR.trustScore >= 70 ? 'var(--success)' : verifyQR.trustScore >= 40 ? 'var(--warning)' : 'var(--danger)' }}>
+                                            {verifyQR.trustScore}/100
+                                        </strong>
+                                    </div>
+                                </div>
+                                <button className="btn btn-primary btn-sm" onClick={downloadVerifyQR} style={{ width: '100%', marginTop: '12px' }}>
+                                    <Download size={14} /> Download QR Code
+                                </button>
+                            </div>
+                        )}
+                    </div>
+                </div>
+
+                {/* ═══════════════════════════════════════════ */}
+                {/* SECTION 2: CONSUMER VALIDATION              */}
+                {/* ═══════════════════════════════════════════ */}
+                <div className="verify-section-divider animate-fade-up" style={{ animationDelay: '0.25s' }}>
+                    <div className="section-divider-icon validation"><FlaskConical size={20} /></div>
+                    <div>
+                        <h2 className="section-divider-title">Consumer Validation</h2>
+                        <p className="section-divider-desc">Trust analysis, AI risk alerts, and reporting tools for this medicine batch</p>
+                    </div>
+                </div>
+
+                <div className="verify-results animate-fade-up" style={{ animationDelay: '0.3s' }}>
+                    {/* Main Column — Analysis */}
+                    <div className="verify-main">
+                        {/* Counterfeit Alert */}
+                        {batchFlagged && (
+                            <div className="product-card" style={{ border: '1px solid rgba(194, 90, 90,0.3)' }}>
+                                <h3 style={{ color: '#c25a5a' }}><AlertTriangle size={16} /> Counterfeit Alert</h3>
+                                <p style={{ fontSize: '0.82rem', color: '#c25a5a' }}>This batch has been previously reported as suspicious by other users. Exercise extreme caution.</p>
+                            </div>
+                        )}
+
+                        {/* Anomaly Alerts */}
+                        {trustResult && trustResult.alerts.length > 0 && (
+                            <div className="product-card">
+                                <h3><Bot size={16} /> AI Risk Alerts</h3>
+                                <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
+                                    {trustResult.alerts.map((alert, i) => (
+                                        <div key={i} style={{
+                                            padding: '8px 12px',
+                                            borderRadius: 'var(--radius-md)',
+                                            fontSize: '0.8rem',
+                                            background: alert.includes('Critical') ? 'var(--danger-bg)' : 'var(--warning-bg)',
+                                            color: alert.includes('Critical') ? 'var(--danger)' : 'var(--warning)',
+                                            border: `1px solid ${alert.includes('Critical') ? 'rgba(239,68,68,0.2)' : 'rgba(245,158,11,0.2)'}`,
+                                            display: 'flex',
+                                            alignItems: 'center',
+                                            gap: '6px',
+                                        }}>
+                                            <AlertTriangle size={12} /> {alert}
+                                        </div>
+                                    ))}
+                                </div>
+                            </div>
+                        )}
+
+                        {/* Why This Medicine Is Safe */}
+                        {trustResult && trustResult.score >= 70 && (
+                            <div className="product-card">
+                                <h3><Info size={16} /> Why This Medicine Is Safe</h3>
+                                <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', fontSize: '0.82rem', color: 'var(--text-secondary)' }}>
+                                    {batchData.inspectorApproved && <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}><CheckCircle2 size={14} style={{ color: '#00d4aa' }} /> Approved by certified quality inspector</div>}
+                                    <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}><CheckCircle2 size={14} style={{ color: '#00d4aa' }} /> Complete supply chain recorded on blockchain</div>
+                                    <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}><CheckCircle2 size={14} style={{ color: '#00d4aa' }} /> AI risk analysis shows no anomalies</div>
+                                    <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}><CheckCircle2 size={14} style={{ color: '#00d4aa' }} /> No counterfeit reports for this batch</div>
+                                </div>
+                            </div>
+                        )}
+
+                        {/* Actions */}
+                        <div className="product-card">
+                            <h3>Actions</h3>
+                            <div style={{ display: 'flex', gap: '8px' }}>
+                                <button className="btn btn-primary btn-sm" onClick={handleSaveToProfile} style={{ flex: 1 }}>
+                                    <Bookmark size={14} /> Save to Profile
+                                </button>
+                                <button className="btn btn-sm" onClick={() => setShowReport(true)} style={{ flex: 1, background: 'rgba(255,71,87,0.1)', color: '#ff4757', border: '1px solid rgba(255,71,87,0.2)' }}>
+                                    <Flag size={14} /> Report Suspected Fake
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    {/* Sidebar — Trust Score & Risk */}
                     <div className="verify-sidebar">
                         {/* Trust Score */}
                         {trustResult && (
@@ -588,133 +715,9 @@ export default function Verify() {
                                 </div>
                             </div>
                         )}
-
-                        {/* Counterfeit Alert */}
-                        {batchFlagged && (
-                            <div className="trust-card" style={{ border: '1px solid rgba(194, 90, 90,0.3)' }}>
-                                <h3 style={{ color: '#c25a5a' }}><AlertTriangle size={16} /> Counterfeit Alert</h3>
-                                <p style={{ fontSize: '0.82rem', color: '#c25a5a' }}>This batch has been previously reported as suspicious by other users. Exercise extreme caution.</p>
-                            </div>
-                        )}
-
-                        {/* Anomaly Alerts */}
-                        {trustResult && trustResult.alerts.length > 0 && (
-                            <div className="trust-card">
-                                <h3><Bot size={16} /> AI Risk Alerts</h3>
-                                <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
-                                    {trustResult.alerts.map((alert, i) => (
-                                        <div key={i} style={{
-                                            padding: '8px 12px',
-                                            borderRadius: 'var(--radius-md)',
-                                            fontSize: '0.8rem',
-                                            background: alert.includes('Critical') ? 'var(--danger-bg)' : 'var(--warning-bg)',
-                                            color: alert.includes('Critical') ? 'var(--danger)' : 'var(--warning)',
-                                            border: `1px solid ${alert.includes('Critical') ? 'rgba(239,68,68,0.2)' : 'rgba(245,158,11,0.2)'}`,
-                                            display: 'flex',
-                                            alignItems: 'center',
-                                            gap: '6px',
-                                        }}>
-                                            <AlertTriangle size={12} /> {alert}
-                                        </div>
-                                    ))}
-                                </div>
-                            </div>
-                        )}
-
-                        {/* Why This Medicine Is Safe */}
-                        {trustResult && trustResult.score >= 70 && (
-                            <div className="trust-card">
-                                <h3><Info size={16} /> Why This Medicine Is Safe</h3>
-                                <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', fontSize: '0.82rem', color: 'var(--text-secondary)' }}>
-                                    {batchData.inspectorApproved && <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}><CheckCircle2 size={14} style={{ color: '#00d4aa' }} /> Approved by certified quality inspector</div>}
-                                    <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}><CheckCircle2 size={14} style={{ color: '#00d4aa' }} /> Complete supply chain recorded on blockchain</div>
-                                    <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}><CheckCircle2 size={14} style={{ color: '#00d4aa' }} /> AI risk analysis shows no anomalies</div>
-                                    <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}><CheckCircle2 size={14} style={{ color: '#00d4aa' }} /> No counterfeit reports for this batch</div>
-                                </div>
-                            </div>
-                        )}
-
-                        {/* Transparency Panel */}
-                        {batchData && (
-                            <div className="trust-card">
-                                <h3><Eye size={16} /> Transparency</h3>
-                                <div style={{ display: 'flex', flexDirection: 'column', gap: '10px', fontSize: '0.82rem' }}>
-                                    <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-                                        <span style={{ color: 'var(--text-secondary)' }}><Hash size={12} /> Blockchain Hash</span>
-                                        <span className="mono" style={{ fontSize: '0.72rem', color: 'var(--text-muted)' }}>{batchData.batchIdHash.slice(0, 12)}...</span>
-                                    </div>
-                                    <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-                                        <span style={{ color: 'var(--text-secondary)' }}><RefreshCw size={12} /> Last Updated</span>
-                                        <span>{batchData.updatedAt ? new Date(batchData.updatedAt * 1000).toLocaleString() : 'N/A'}</span>
-                                    </div>
-                                    <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-                                        <span style={{ color: 'var(--text-secondary)' }}><Clock size={12} /> Created</span>
-                                        <span>{new Date(batchData.createdAt * 1000).toLocaleString()}</span>
-                                    </div>
-                                    <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-                                        <span style={{ color: 'var(--text-secondary)' }}><Eye size={12} /> Data Sources</span>
-                                        <span>Blockchain + AI + Inspector</span>
-                                    </div>
-                                </div>
-                            </div>
-                        )}
-
-                        {/* Verification QR Code */}
-                        {verifyQR && (
-                            <div className="trust-card verify-qr-card">
-                                <h3><QrCode size={16} /> Verification QR Code</h3>
-                                <p style={{ fontSize: '0.78rem', color: 'var(--text-secondary)', marginBottom: '14px', lineHeight: 1.5 }}>
-                                    Unique QR generated for this batch. Anyone can scan it to instantly verify authenticity.
-                                </p>
-                                <div className="verify-qr-wrapper">
-                                    <QRCodeCanvas
-                                        id="verify-qr-canvas"
-                                        value={verifyQR.url}
-                                        size={180}
-                                        level="H"
-                                        includeMargin={true}
-                                        imageSettings={{
-                                            src: '/images/favicon.ico',
-                                            height: 28,
-                                            width: 28,
-                                            excavate: true,
-                                        }}
-                                        style={{ borderRadius: '10px', display: 'block', margin: '0 auto' }}
-                                    />
-                                </div>
-                                <div className="verify-qr-meta">
-                                    <div className="verify-qr-row"><span>Batch</span><strong>{verifyQR.batchNumber}</strong></div>
-                                    <div className="verify-qr-row"><span>Drug</span><strong>{verifyQR.drugName}</strong></div>
-                                    <div className="verify-qr-row">
-                                        <span>Trust Score</span>
-                                        <strong style={{ color: verifyQR.trustScore >= 70 ? 'var(--success)' : verifyQR.trustScore >= 40 ? 'var(--warning)' : 'var(--danger)' }}>
-                                            {verifyQR.trustScore}/100
-                                        </strong>
-                                    </div>
-                                    <div className="verify-qr-row"><span>Generated</span><strong>{new Date(verifyQR.verifiedAt).toLocaleTimeString()}</strong></div>
-                                </div>
-                                <button className="btn btn-primary btn-sm" onClick={downloadVerifyQR} style={{ width: '100%', marginTop: '12px' }}>
-                                    <Download size={14} /> Download QR Code
-                                </button>
-                            </div>
-                        )}
-
-                        {/* Actions */}
-                        {batchData && (
-                            <div className="trust-card">
-                                <h3>Actions</h3>
-                                <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
-                                    <button className="btn btn-primary btn-sm" onClick={handleSaveToProfile} style={{ width: '100%' }}>
-                                        <Bookmark size={14} /> Save to Profile
-                                    </button>
-                                    <button className="btn btn-sm" onClick={() => setShowReport(true)} style={{ width: '100%', background: 'rgba(255,71,87,0.1)', color: '#ff4757', border: '1px solid rgba(255,71,87,0.2)' }}>
-                                        <Flag size={14} /> Report Suspected Fake
-                                    </button>
-                                </div>
-                            </div>
-                        )}
                     </div>
                 </div>
+                </>
             )}
 
             {/* Report Fake Modal */}

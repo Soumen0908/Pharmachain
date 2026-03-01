@@ -1,10 +1,20 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { QrCode, Camera, Square, Search, Keyboard, Upload, Image, CheckCircle2, Loader2, X } from 'lucide-react';
+import { QrCode, Camera, Square, Search, Keyboard, Upload, Image, CheckCircle2, Loader2, X, Lock, Unlock, Clock, AlertTriangle, ShieldAlert, FlaskConical, PartyPopper, RotateCcw, XCircle } from 'lucide-react';
+import { useWeb3 } from '../context/Web3Context';
+import { useAuth } from '../context/AuthContext';
+import { useToast } from '../components/Toast';
+import { verifyScratchCode, verifyBatch as serverVerifyBatch } from '../services/api';
+import { calculateReward } from '../services/rewardEngine';
+import { addRewardPoints, getRewards } from '../services/offChainStore';
+import ScratchCard from '../components/ScratchCard';
 import './Scan.css';
 
 export default function Scan() {
     const navigate = useNavigate();
+    const { contract, account, isConnected, truncateAddress } = useWeb3();
+    const { user, isAuthenticated } = useAuth();
+    const toast = useToast();
     const [scanning, setScanning] = useState(false);
     const [manualId, setManualId] = useState('');
     const [error, setError] = useState('');
@@ -19,6 +29,28 @@ export default function Scan() {
     const fileInputRef = useRef(null);
     const dropZoneRef = useRef(null);
 
+    // Physical Authentication state
+    const [scratchInput, setScratchInput] = useState('');
+    const [batchForActivation, setBatchForActivation] = useState('');
+    const [activationLoading, setActivationLoading] = useState(false);
+    const [activationError, setActivationError] = useState('');
+    const [activationResult, setActivationResult] = useState(null);
+    const [alreadyActivated, setAlreadyActivated] = useState(null);
+
+    // Success popup state
+    const [showSuccessPopup, setShowSuccessPopup] = useState(false);
+    const [successData, setSuccessData] = useState(null);
+
+    function resetActivationForm() {
+        setScratchInput('');
+        setBatchForActivation('');
+        setActivationResult(null);
+        setActivationError('');
+        setAlreadyActivated(null);
+        setShowSuccessPopup(false);
+        setSuccessData(null);
+    }
+
     async function startCamera() {
         setScanning(true);
         setError('');
@@ -31,11 +63,20 @@ export default function Scan() {
                 { facingMode: 'environment' },
                 { fps: 10, qrbox: { width: 250, height: 250 } },
                 (decodedText) => {
-                    // QR codes hold the scratch code value
                     scanner.stop().catch(() => { });
                     setScanning(false);
-                    const scratchCode = decodedText.trim();
-                    navigate(`/verify?scratch=${encodeURIComponent(scratchCode)}`);
+                    // Parse QR JSON: { batchNumber, scratchCode }
+                    try {
+                        const data = JSON.parse(decodedText.trim());
+                        if (data.scratchCode) setScratchInput(data.scratchCode);
+                        if (data.batchNumber) setBatchForActivation(data.batchNumber);
+                        // Scroll to activation section
+                        setTimeout(() => document.querySelector('.activation-section')?.scrollIntoView({ behavior: 'smooth' }), 200);
+                    } catch {
+                        // Fallback: treat entire text as scratch code
+                        setScratchInput(decodedText.trim());
+                        setTimeout(() => document.querySelector('.activation-section')?.scrollIntoView({ behavior: 'smooth' }), 200);
+                    }
                 },
                 () => { }
             );
@@ -115,15 +156,126 @@ export default function Scan() {
             const decodedText = await scanner.scanFile(uploadFile, /* showImage */ false);
             scanner.clear();
 
-            // QR codes hold the scratch code value
-            const scratchCode = decodedText.trim();
-            setUploadResult({ success: true, scratchCode, raw: decodedText });
+            // Parse QR JSON: { batchNumber, scratchCode }
+            let scratchCode = decodedText.trim();
+            let batchNumber = '';
+            try {
+                const data = JSON.parse(decodedText.trim());
+                if (data.scratchCode) scratchCode = data.scratchCode;
+                if (data.batchNumber) batchNumber = data.batchNumber;
+            } catch {
+                // Fallback: treat entire text as scratch code
+            }
+            setUploadResult({ success: true, scratchCode, batchNumber, raw: decodedText });
         } catch (err) {
             console.error('QR decode error:', err);
             setUploadResult({ success: false, error: 'Could not detect a valid QR code in this image. Please try a clearer image.' });
         } finally {
             setUploadLoading(false);
         }
+    }
+
+    // Cancel controller for MetaMask transactions
+    const abortRef = useRef(null);
+
+    function handleCancelActivation() {
+        if (abortRef.current) abortRef.current.cancelled = true;
+        setActivationLoading(false);
+        setActivationError('Activation cancelled by user.');
+    }
+
+    // ── Physical Authentication (Scratch Code Activation) ──
+    async function handleActivate() {
+        if (!scratchInput) { setActivationError('Enter the scratch code from the medicine packaging'); return; }
+        if (!batchForActivation) { setActivationError('Enter the Batch ID first'); return; }
+
+        setActivationLoading(true);
+        setActivationError('');
+        setActivationResult(null);
+        setAlreadyActivated(null);
+
+        const cancelToken = { cancelled: false };
+        abortRef.current = cancelToken;
+
+        function showSuccess(result) {
+            setActivationResult(result);
+            setSuccessData({
+                batchId: batchForActivation,
+                scratchCode: scratchInput,
+                firstActivation: result.firstActivation,
+                reward: result.reward || null,
+                timestamp: new Date().toLocaleString(),
+            });
+            setShowSuccessPopup(true);
+            toast.success('Product activated successfully!');
+        }
+
+        // If wallet is connected, try MetaMask transaction first
+        if (contract && isConnected) {
+            try {
+                const { ethers } = await import('ethers');
+                const batchHash = ethers.keccak256(ethers.toUtf8Bytes(batchForActivation));
+                const tx = await contract.activateProduct(batchHash, scratchInput);
+
+                if (cancelToken.cancelled) return;
+
+                await tx.wait();
+
+                if (cancelToken.cancelled) return;
+
+                const updatedDetails = await contract.getBatchDetails(batchHash);
+                const isFirst = updatedDetails[6].toLowerCase() === account.toLowerCase();
+
+                let result;
+                if (isFirst) {
+                    const reward = calculateReward(true, 0);
+                    addRewardPoints(account, reward.points, 'First product activation');
+                    result = { firstActivation: true, reward };
+                } else {
+                    result = { firstActivation: false };
+                }
+
+                showSuccess(result);
+                setActivationLoading(false);
+                return;
+            } catch (err) {
+                if (cancelToken.cancelled) return;
+                console.warn('MetaMask activation failed, trying server fallback:', err.message);
+                if (err.code === 'ACTION_REJECTED' || err.code === 4001) {
+                    setActivationError('Transaction rejected in MetaMask.');
+                    setActivationLoading(false);
+                    return;
+                }
+                if (err.reason?.includes('Already activated')) {
+                    setAlreadyActivated({ by: 'another user' });
+                    setActivationLoading(false);
+                    return;
+                }
+                if (err.reason?.includes('Invalid scratch code')) {
+                    setActivationError('Invalid scratch code! This may be a counterfeit product.');
+                    setActivationLoading(false);
+                    return;
+                }
+                if (err.reason?.includes('not yet inspector-approved')) {
+                    setActivationError('Product is not yet inspector-approved for sale.');
+                    setActivationLoading(false);
+                    return;
+                }
+            }
+        }
+
+        // Server API fallback
+        try {
+            const result = await verifyScratchCode(batchForActivation, scratchInput);
+            if (cancelToken.cancelled) return;
+            const activResult = {
+                firstActivation: result.firstActivation,
+                reward: result.firstActivation ? calculateReward(true, 0) : null,
+            };
+            showSuccess(activResult);
+        } catch (err) {
+            if (!cancelToken.cancelled) setActivationError(err.message || 'Activation failed');
+        } finally { if (!cancelToken.cancelled) setActivationLoading(false); }
     }
 
     useEffect(() => {
@@ -252,10 +404,15 @@ export default function Scan() {
                             <CheckCircle2 size={18} />
                             <div>
                                 <strong>QR Code Detected!</strong>
+                                {uploadResult.batchNumber && <p>Batch: <code>{uploadResult.batchNumber}</code></p>}
                                 <p>Scratch Code: <code>{uploadResult.scratchCode}</code></p>
                             </div>
-                            <button className="btn btn-primary btn-sm" onClick={() => navigate(`/verify?scratch=${encodeURIComponent(uploadResult.scratchCode)}`)}>
-                                Verify Now →
+                            <button className="btn btn-primary btn-sm" onClick={() => {
+                                setScratchInput(uploadResult.scratchCode);
+                                if (uploadResult.batchNumber) setBatchForActivation(uploadResult.batchNumber);
+                                document.querySelector('.activation-section')?.scrollIntoView({ behavior: 'smooth' });
+                            }}>
+                                Use for Activation →
                             </button>
                         </div>
                     )}
@@ -269,6 +426,67 @@ export default function Scan() {
                             </div>
                             <button className="btn btn-secondary btn-sm" onClick={clearUpload}>
                                 Try Again
+                            </button>
+                        </div>
+                    )}
+                </div>
+
+                {/* Physical Authentication — Scratch Code */}
+                <div className="activation-section glass-card animate-fade-up" style={{ animationDelay: '0.25s' }}>
+                    <div className="activation-section-header">
+                        <div className="activation-section-icon"><FlaskConical size={18} /></div>
+                        <div>
+                            <h3><Lock size={16} /> Physical Authentication</h3>
+                            <p>Enter the batch ID and scratch code from the medicine packaging to activate &amp; claim ownership</p>
+                        </div>
+                    </div>
+
+                    {alreadyActivated ? (
+                        <div className="activation-already">
+                            <AlertTriangle size={14} /> Product already activated.
+                            <div className="activation-warning-inline">
+                                <ShieldAlert size={14} /> This product was activated by another address. This may indicate a <strong>counterfeit</strong>.
+                            </div>
+                        </div>
+                    ) : (
+                        <div className="activation-form-row">
+                            <input
+                                className="input-field"
+                                placeholder="Batch ID (e.g. PCM-2026-001)"
+                                value={batchForActivation}
+                                onChange={e => setBatchForActivation(e.target.value)}
+                                disabled={activationLoading}
+                            />
+                            <input
+                                className="input-field"
+                                placeholder="Scratch code from packaging"
+                                value={scratchInput}
+                                onChange={e => setScratchInput(e.target.value.toUpperCase())}
+                                style={{ fontFamily: 'var(--font-mono)', letterSpacing: '0.15em' }}
+                                disabled={activationLoading}
+                            />
+                            <button className="btn btn-primary" onClick={handleActivate} disabled={activationLoading}>
+                                {activationLoading ? <><Loader2 size={14} className="spin" /> Activating...</> : <><Unlock size={14} /> Activate</>}
+                            </button>
+                            {activationLoading && (
+                                <button className="btn btn-danger" onClick={handleCancelActivation} title="Cancel activation">
+                                    <XCircle size={14} /> Cancel
+                                </button>
+                            )}
+                        </div>
+                    )}
+
+                    {activationError && <div className="form-error" style={{ marginTop: '10px' }}>{activationError}</div>}
+
+                    {activationResult && (
+                        <div style={{ marginTop: '16px' }}>
+                            <ScratchCard
+                                isFirstActivation={activationResult.firstActivation}
+                                reward={activationResult.reward}
+                                onComplete={() => { }}
+                            />
+                            <button className="btn btn-secondary" onClick={resetActivationForm} style={{ marginTop: '12px', width: '100%' }}>
+                                <RotateCcw size={14} /> Activate Another Batch
                             </button>
                         </div>
                     )}
@@ -296,7 +514,7 @@ export default function Scan() {
                             <span className="step-num">3</span>
                             <div>
                                 <strong>Activate with Scratch Code</strong>
-                                <p>The scratch code from the QR is auto-filled — verify to claim ownership</p>
+                                <p>Enter the batch ID and scratch code below to activate &amp; claim product ownership</p>
                             </div>
                         </div>
                         <div className="instruction-step">
@@ -309,6 +527,53 @@ export default function Scan() {
                     </div>
                 </div>
             </div>
+
+            {/* Success Popup Modal */}
+            {showSuccessPopup && successData && (
+                <div className="success-popup-overlay" onClick={() => { }}>
+                    <div className="success-popup-modal animate-fade-up" onClick={e => e.stopPropagation()}>
+                        <div className="success-popup-icon">
+                            <PartyPopper size={48} />
+                        </div>
+                        <h2 className="success-popup-title">Transaction Complete!</h2>
+                        <p className="success-popup-subtitle">
+                            {successData.firstActivation
+                                ? 'You are the first to activate this product. Congratulations!'
+                                : 'Product has been verified and activated successfully.'}
+                        </p>
+
+                        <div className="success-popup-details">
+                            <div className="success-detail-row">
+                                <span className="detail-label">Batch ID</span>
+                                <span className="detail-value">{successData.batchId}</span>
+                            </div>
+                            <div className="success-detail-row">
+                                <span className="detail-label">Scratch Code</span>
+                                <span className="detail-value mono">{successData.scratchCode}</span>
+                            </div>
+                            <div className="success-detail-row">
+                                <span className="detail-label">Time</span>
+                                <span className="detail-value">{successData.timestamp}</span>
+                            </div>
+                            {successData.reward && (
+                                <div className="success-detail-row reward-row">
+                                    <span className="detail-label">Reward Earned</span>
+                                    <span className="detail-value reward-value">+{successData.reward.points} pts</span>
+                                </div>
+                            )}
+                        </div>
+
+                        <div className="success-popup-actions">
+                            <button className="btn btn-primary btn-lg" onClick={resetActivationForm}>
+                                <RotateCcw size={16} /> Activate New Batch
+                            </button>
+                            <button className="btn btn-secondary" onClick={() => navigate('/verify')}>
+                                Go to Verify Page
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            )}
         </div>
     );
 }

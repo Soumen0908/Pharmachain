@@ -1,91 +1,18 @@
-import React, { useRef, useEffect, useState, useCallback } from 'react';
+import React, { useEffect, useState } from 'react';
 import { PartyPopper, AlertTriangle, Trophy } from 'lucide-react';
 import './ScratchCard.css';
 
 export default function ScratchCard({ isFirstActivation, reward, onComplete }) {
-    const canvasRef = useRef(null);
     const [revealed, setRevealed] = useState(false);
-    const [scratching, setScratching] = useState(false);
-    const scratchedRef = useRef(0);
-
-    const W = 320;
-    const H = 200;
 
     useEffect(() => {
-        const canvas = canvasRef.current;
-        if (!canvas) return;
-        const ctx = canvas.getContext('2d');
-        const dpr = window.devicePixelRatio || 1;
-        canvas.width = W * dpr;
-        canvas.height = H * dpr;
-        ctx.scale(dpr, dpr);
-
-        // Draw the scratchable cover
-        const gradient = ctx.createLinearGradient(0, 0, W, H);
-        gradient.addColorStop(0, '#1a1e3a');
-        gradient.addColorStop(0.5, '#0f2340');
-        gradient.addColorStop(1, '#1a1e3a');
-        ctx.fillStyle = gradient;
-        ctx.fillRect(0, 0, W, H);
-
-        // Add shimmer pattern
-        ctx.fillStyle = 'rgba(0, 212, 170, 0.08)';
-        for (let i = 0; i < 20; i++) {
-            ctx.beginPath();
-            ctx.arc(Math.random() * W, Math.random() * H, Math.random() * 30 + 5, 0, Math.PI * 2);
-            ctx.fill();
-        }
-
-        // Text
-        ctx.fillStyle = 'rgba(255, 255, 255, 0.6)';
-        ctx.font = '600 16px Inter, sans-serif';
-        ctx.textAlign = 'center';
-        ctx.fillText('Scratch to Reveal Result', W / 2, H / 2 - 10);
-        ctx.font = '12px Inter, sans-serif';
-        ctx.fillStyle = 'rgba(255, 255, 255, 0.3)';
-        ctx.fillText('Use your mouse or finger to scratch', W / 2, H / 2 + 15);
-    }, []);
-
-    const scratch = useCallback((x, y) => {
-        const canvas = canvasRef.current;
-        if (!canvas || revealed) return;
-        const ctx = canvas.getContext('2d');
-        const dpr = window.devicePixelRatio || 1;
-
-        ctx.globalCompositeOperation = 'destination-out';
-        ctx.beginPath();
-        ctx.arc(x * dpr, y * dpr, 20 * dpr, 0, Math.PI * 2);
-        ctx.fill();
-
-        scratchedRef.current += 1;
-        if (scratchedRef.current > 40 && !revealed) {
+        // Auto-reveal after a brief delay
+        const timer = setTimeout(() => {
             setRevealed(true);
             onComplete?.();
-        }
-    }, [revealed, onComplete]);
-
-    const getPos = (e) => {
-        const rect = canvasRef.current.getBoundingClientRect();
-        const clientX = e.touches ? e.touches[0].clientX : e.clientX;
-        const clientY = e.touches ? e.touches[0].clientY : e.clientY;
-        return { x: clientX - rect.left, y: clientY - rect.top };
-    };
-
-    const handleStart = (e) => {
-        e.preventDefault();
-        setScratching(true);
-        const pos = getPos(e);
-        scratch(pos.x, pos.y);
-    };
-
-    const handleMove = (e) => {
-        if (!scratching) return;
-        e.preventDefault();
-        const pos = getPos(e);
-        scratch(pos.x, pos.y);
-    };
-
-    const handleEnd = () => setScratching(false);
+        }, 600);
+        return () => clearTimeout(timer);
+    }, [onComplete]);
 
     return (
         <div className={`scratch-card-wrapper ${revealed ? 'revealed' : ''}`}>
@@ -118,18 +45,6 @@ export default function ScratchCard({ isFirstActivation, reward, onComplete }) {
                     </>
                 )}
             </div>
-            <canvas
-                ref={canvasRef}
-                className={`scratch-canvas ${revealed ? 'fade-out' : ''}`}
-                style={{ width: W, height: H }}
-                onMouseDown={handleStart}
-                onMouseMove={handleMove}
-                onMouseUp={handleEnd}
-                onMouseLeave={handleEnd}
-                onTouchStart={handleStart}
-                onTouchMove={handleMove}
-                onTouchEnd={handleEnd}
-            />
             {revealed && isFirstActivation && <Confetti />}
         </div>
     );

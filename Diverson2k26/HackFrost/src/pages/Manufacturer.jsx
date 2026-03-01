@@ -161,9 +161,8 @@ export default function Manufacturer() {
                             <div className="qr-display">
                                 <QRCodeSVG
                                     value={JSON.stringify({
-                                        batchId: createdBatch.batchNumber,
-                                        qrHash: createdBatch.qrHash,
-                                        medicine: createdBatch.medicineName,
+                                        batchNumber: createdBatch.batchNumber,
+                                        scratchCode: createdBatch.scratchCode,
                                     })}
                                     size={200}
                                     bgColor="transparent"

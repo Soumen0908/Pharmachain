@@ -706,6 +706,7 @@ router.get('/verify/:identifier', async (req, res) => {
                 expiryDate: batch.expiryDate,
                 quantity: batch.quantity,
                 mrp: batch.mrp,
+                scratchCode: batch.scratchCode,
             },
             blockchain: blockchainData,
             supplyChain,

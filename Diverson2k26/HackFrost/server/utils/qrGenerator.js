@@ -8,8 +8,8 @@ function generateScratchCode() {
     return crypto.randomBytes(4).toString('hex').toUpperCase();
 }
 
-// Generate QR data payload for a batch
-function generateQRPayload(batchId, batchNumber, manufacturerAddress) {
+// Generate QR data payload for a batch (encodes batchNumber + scratchCode)
+function generateQRPayload(batchId, batchNumber, manufacturerAddress, scratchCode) {
     const salt = crypto.randomBytes(8).toString('hex');
     const qrHash = crypto.createHash('sha256')
         .update(`${batchId}:${batchNumber}:${manufacturerAddress}:${salt}`)
@@ -18,10 +18,8 @@ function generateQRPayload(batchId, batchNumber, manufacturerAddress) {
     return {
         qrHash,
         payload: JSON.stringify({
-            batchId,
             batchNumber,
-            qrHash,
-            t: Date.now(),
+            scratchCode: scratchCode || '',
         }),
         salt,
     };

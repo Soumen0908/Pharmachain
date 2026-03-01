@@ -92,7 +92,7 @@ async function main() {
             manufacturerName: 'Seed Manufacturer',
             scratchCode: b.scratch,
             qrHash,
-            qrPayload: JSON.stringify({ batchId: batchIdHash, batchNumber: b.id, qrHash, t: Date.now() }),
+            qrPayload: JSON.stringify({ batchNumber: b.id, scratchCode: b.scratch }),
             qrSalt: salt,
             userId: 'seed',
             manufacturerAddress: accounts[1].address,
